@@ -1,7 +1,8 @@
 import React from "react";
+import Game from "./components/Game";
 
 function App() {
-  return <div>Hello</div>;
+  return <Game />;
 }
 
 export default App;
