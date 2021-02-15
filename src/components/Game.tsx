@@ -10,7 +10,7 @@ export default function Game() {
       <div>
         Croupier Cards:
         <div style={{ display: "flex" }}>
-          {game.croupierDeck.map((card, index) => (
+          {game.croupierHand.map((card, index) => (
             <Card image={card.image} key={index} />
           ))}
         </div>

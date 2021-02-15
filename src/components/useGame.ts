@@ -1,39 +1,29 @@
 import { stringify } from "querystring";
 import { useEffect, useState } from "react";
 
+interface Deck {
+  success: boolean;
+  deck_id: string;
+  cards: Array<Card>;
+  remaining: number;
+}
+
+interface Card {
+  code: string;
+  image: string;
+  images: { svg: string; png: string };
+  value: string;
+  suit: string;
+}
+
+const poitns = {
+  QUEEN: 10,
+  ACE: 10,
+};
+
 export default function useExchange() {
-  interface Deck {
-    success: boolean;
-    deck_id: string;
-    cards: Array<Card>;
-    remaining: number;
-  }
-
-  interface Card {
-    code: string;
-    image: string;
-    images: { svg: string; png: string };
-    value: string | number;
-    suit: string;
-  }
-
-  const [deck, setDeck] = useState<Deck>({
-    success: true,
-    deck_id: "",
-    cards: [
-      {
-        code: "",
-        image: "",
-        images: { svg: "", png: "" },
-        value: "",
-        suit: "",
-      },
-    ],
-    remaining: 0,
-  });
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
   const [croupierDeck, setCroupierDeck] = useState<Array<Card>>([]);
-
   const [gameOn, setGameOn] = useState<boolean>(false);
   const [
     cardsCountDisplayPlayer,
@@ -44,53 +34,29 @@ export default function useExchange() {
     setCardsCountDisplayCroupier,
   ] = useState<Number>(1);
 
-  const [playerHand, setPlayerHand] = useState<Array<Card>>([]);
-  const [croupierHand, setCroupierHand] = useState<Array<Card>>([]);
-
   async function getDeck() {
     const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=6`;
     const res = await fetch(url);
     const deckData = await res.json();
-    //console.log(deckData.cards);
-    setDeck(deckData);
+    splitCards(deckData);
   }
 
   function splitCards(deck: Deck) {
     let playerDeck = [];
     let croupierDeck = [];
-    for (let i = 0; i < 6; i++) {
+    for (const [index, card] of Object.entries(deck.cards)) {
+      const i = Number(index);
       if (i % 2 == 0) {
-        croupierDeck.push(deck.cards[i]);
+        croupierDeck.push(card);
       } else {
-        playerDeck.push(deck.cards[i]);
+        playerDeck.push(card);
       }
     }
     setPlayerDeck(playerDeck);
     setCroupierDeck(croupierDeck);
-    console.log(playerDeck);
   }
 
-  function showCards(
-    playerDeck: Card[],
-    cardsCountDisplayPlayer: Number,
-    cardsCountDisplayCroupier: Number
-  ) {
-    let playerHand = [];
-    let croupierHand = [];
-    for (let i = 0; i <= cardsCountDisplayPlayer; i++) {
-      playerHand.push(playerDeck[i]);
-      console.log(playerDeck[i]);
-    }
-    setPlayerHand(playerHand);
-    console.log(playerHand);
-
-    for (let i = 0; i <= cardsCountDisplayCroupier; i++) {
-      croupierHand.push(playerDeck[i]);
-    }
-    setCroupierHand(croupierHand);
-  }
-
-  function startGame(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function startGame() {
     setGameOn(true);
   }
 
@@ -98,16 +64,10 @@ export default function useExchange() {
     getDeck();
   }, []);
 
-  useEffect(() => {
-    splitCards(deck);
-  }, [gameOn, deck]);
-
-  useEffect(() => {
-    showCards(playerDeck, cardsCountDisplayPlayer, cardsCountDisplayCroupier);
-  }, [playerDeck, croupierDeck]);
+  const croupierHand = croupierDeck.slice(0, 1);
+  const playerHand = playerDeck.slice(0, 2);
 
   return {
-    deck,
     startGame,
     playerDeck,
     croupierDeck,
