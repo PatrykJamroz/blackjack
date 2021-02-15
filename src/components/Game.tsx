@@ -8,7 +8,7 @@ export default function Game() {
   return (
     <div>
       <div>
-        Croupier Cards:
+        Croupier Cards: {game.croupierCount}
         <div style={{ display: "flex" }}>
           {game.croupierHand.map((card, index) => (
             <Card image={card.image} key={index} />
@@ -22,12 +22,24 @@ export default function Game() {
             <Card image={card.image} key={index} />
           ))}
         </div>
-        Player Cards
+        Player Cards {game.playerCount}
       </div>
-      <div>Some text about game state</div>
       <div>
-        <button>Hit</button>
-        <button>Stand</button>
+        <p>{game.gameStatus}</p>
+      </div>
+      <div>
+        <button
+          onClick={game.handleHit}
+          disabled={game.actionBtnsDisabled ? true : false}
+        >
+          Hit
+        </button>
+        <button
+          onClick={game.handleStand}
+          disabled={game.actionBtnsDisabled ? true : false}
+        >
+          Stand
+        </button>
         <button>Double</button>
       </div>
       <div>
