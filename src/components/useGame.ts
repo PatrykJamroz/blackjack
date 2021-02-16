@@ -1,5 +1,3 @@
-import { count } from "console";
-import { stringify } from "querystring";
 import { useEffect, useState } from "react";
 
 interface Deck {
@@ -17,20 +15,38 @@ interface Card {
   suit: string;
 }
 
-const poitns = {
-  QUEEN: 10,
-  ACE: 10,
-};
+function getValue(props: string): number {
+  if (props === "ACE") {
+    return 11;
+  } else if (props === "QUEEN" || props === "KING" || props === "JACK") {
+    return 10;
+  } else {
+    return Number(props);
+  }
+}
+
+function count(cards: Array<Card>): number {
+  let playerCount = 0;
+  let aceSeen = false;
+  for (const card of cards) {
+    let p = getValue(card.value);
+    if (aceSeen && card.value === "ACE") {
+      p = 1;
+    }
+    aceSeen = card.value === "ACE";
+    playerCount += p;
+  }
+  return playerCount;
+}
 
 export default function useExchange() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
+
   const [gameOn, setGameOn] = useState<boolean>(false);
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
-  const [playerCount, setPlayerCount] = useState(0);
-  const [dealerCount, setdealerCount] = useState(0);
-  const [winner, setWinner] = useState<boolean>(false);
+  const [roundWon, setRoundWon] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [gameStatus, setGameStatus] = useState("");
@@ -40,7 +56,7 @@ export default function useExchange() {
     const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=6`;
     const res = await fetch(url);
     const deckData = await res.json();
-    splitCards(deckData);
+    return deckData;
   }
 
   function splitCards(deck: Deck) {
@@ -58,13 +74,12 @@ export default function useExchange() {
     setdealerDeck(dealerDeck);
   }
 
-  const dealerHand = dealerDeck.slice(0, cardsCountDisplayDealer);
-  const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
-
   function startGame() {
     setGameOn(true);
-    getDeck();
-    setActionBtnsDisabled(false);
+    getDeck().then((deckData) => {
+      splitCards(deckData);
+      setActionBtnsDisabled(false);
+    });
   }
 
   function handleHit() {
@@ -80,32 +95,6 @@ export default function useExchange() {
     setcardsCountDisplayDealer(2);
   }
 
-  function checkValue(props: string): number {
-    if (props === "ACE") {
-      return 11;
-    } else if (props === "QUEEN" || props === "KING" || props === "JACK") {
-      return 10;
-    } else {
-      return Number(props);
-    }
-  }
-
-  function countPlayer(playerHand: Array<Card>) {
-    let playerCount = 0;
-    for (const card of playerHand) {
-      playerCount = playerCount + checkValue(card.value);
-    }
-    setPlayerCount(playerCount);
-  }
-
-  function countDealer(dealerHand: Array<Card>) {
-    let dealerCount = 0;
-    for (const card of dealerHand) {
-      dealerCount = dealerCount + checkValue(card.value);
-    }
-    setdealerCount(dealerCount);
-  }
-
   function compareCounts(playerCount: number, dealerCount: number) {
     if (playerCount > dealerCount) {
       console.log("win");
@@ -119,50 +108,39 @@ export default function useExchange() {
     }
   }
 
+  const dealerHand = dealerDeck.slice(0, cardsCountDisplayDealer);
+  const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
+  const playerCount = count(playerHand);
+  const dealerCount = count(dealerHand);
+
   useEffect(() => {
     if (gameOn) {
-      if (playerCount >= 21) {
+      if (playerCount === 21) {
         console.log("win!");
       }
     }
-  }, [gameOn]);
-
-  useEffect(() => {
-    countPlayer(playerHand);
-    countDealer(dealerHand);
-  }, [
-    gameOn,
-    playerHand,
-    dealerHand,
-    cardsCountDisplayDealer,
-    cardsCountDisplayPlayer,
-  ]);
-
-  useEffect(() => {
-    if (playerHand.length > 2) {
-      if (playerCount > 21) {
-        console.log("loose");
-      } else if (playerCount === 21) {
-        console.log("win");
-      }
-    }
-  }, [playerHand]);
+  }, [gameOn, playerCount]);
 
   useEffect(() => {
     if (isDealerTurn && cardsCountDisplayDealer === 2) {
-      if (dealerCount >= 21) {
-        console.log("loose");
+      if (dealerCount > 21) {
+        console.log("win");
       } else if (dealerCount < 17) {
         console.log(`dealer count when 3rd card shown: ${dealerCount}`);
         setcardsCountDisplayDealer(3);
+      } else if (dealerCount === 21) {
+        console.log("loose");
       } else {
         compareCounts(playerCount, dealerCount);
       }
-    } else if (isDealerTurn && dealerCount < 21) {
+    } else if (isDealerTurn && dealerCount < 21 && playerCount < 21) {
       compareCounts(playerCount, dealerCount);
-    } else if (isDealerTurn) {
+    } else if (isDealerTurn && dealerCount === 21) {
+      console.log("loose");
+    } else if (isDealerTurn && dealerCount > 21) {
       console.log("win");
-      compareCounts(playerCount, dealerCount);
+    } else if (isDealerTurn && playerCount > 21) {
+      console.log("loose");
     }
   }, [cardsCountDisplayDealer, dealerCount, isDealerTurn, playerCount]);
 
@@ -179,7 +157,6 @@ export default function useExchange() {
     handleHit,
     handleStand,
     actionBtnsDisabled,
-    winner,
     gameStatus,
   };
 }
