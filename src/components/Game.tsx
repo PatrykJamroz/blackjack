@@ -8,9 +8,9 @@ export default function Game() {
   return (
     <div>
       <div>
-        Croupier Cards: {game.croupierCount}
+        dealer Cards: {game.dealerCount}
         <div style={{ display: "flex" }}>
-          {game.croupierHand.map((card, index) => (
+          {game.dealerHand.map((card, index) => (
             <Card image={card.image} key={index} />
           ))}
         </div>

@@ -24,16 +24,17 @@ const poitns = {
 
 export default function useExchange() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
-  const [croupierDeck, setCroupierDeck] = useState<Array<Card>>([]);
+  const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
   const [gameOn, setGameOn] = useState<boolean>(false);
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
-  const [cardsCountDisplayCroupier, setCardsCountDisplayCroupier] = useState(1);
+  const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
   const [playerCount, setPlayerCount] = useState(0);
-  const [croupierCount, setCroupierCount] = useState(0);
+  const [dealerCount, setdealerCount] = useState(0);
   const [winner, setWinner] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [gameStatus, setGameStatus] = useState("");
+  const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
 
   async function getDeck() {
     const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=6`;
@@ -44,20 +45,20 @@ export default function useExchange() {
 
   function splitCards(deck: Deck) {
     let playerDeck = [];
-    let croupierDeck = [];
+    let dealerDeck = [];
     for (const [index, card] of Object.entries(deck.cards)) {
       const i = Number(index);
       if (i % 2 == 0) {
-        croupierDeck.push(card);
+        dealerDeck.push(card);
       } else {
         playerDeck.push(card);
       }
     }
     setPlayerDeck(playerDeck);
-    setCroupierDeck(croupierDeck);
+    setdealerDeck(dealerDeck);
   }
 
-  const croupierHand = croupierDeck.slice(0, cardsCountDisplayCroupier);
+  const dealerHand = dealerDeck.slice(0, cardsCountDisplayDealer);
   const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
 
   function startGame() {
@@ -67,14 +68,16 @@ export default function useExchange() {
   }
 
   function handleHit() {
+    setIsDealerTurn(true);
     setActionBtnsDisabled(true);
     setCardsCountDisplayPlayer(3);
-    setCardsCountDisplayCroupier(2);
+    setcardsCountDisplayDealer(2);
   }
 
   function handleStand() {
+    setIsDealerTurn(true);
     setActionBtnsDisabled(true);
-    setCardsCountDisplayCroupier(2);
+    setcardsCountDisplayDealer(2);
   }
 
   function checkValue(props: string): number {
@@ -87,111 +90,92 @@ export default function useExchange() {
     }
   }
 
-  function countCroupier(croupierHand: Array<Card>) {
-    let croupierCount = 0;
-    for (const card of croupierHand) {
-      //console.log(card.value);
-      croupierCount = croupierCount + checkValue(card.value);
-    }
-    //return croupierCount;
-    setCroupierCount(croupierCount);
-    if (croupierHand.length === 2 && croupierCount < 17 && playerCount < 21) {
-      setCardsCountDisplayCroupier(3);
-    }
-  }
-
-  function roundChecker(
-    playerCount: number,
-    croupierCount: number,
-    playerHand: Array<Card>,
-    croupierHand: Array<Card>
-  ) {
-    if (playerCount === 21) {
-      //setGameStatus("You WON!");
-      console.log("win");
-    } else if (croupierCount === 21) {
-      console.log("loose");
-    } else if (playerCount > 21) {
-      console.log("loose");
-    } else if (croupierCount > 21) {
-      console.log("win");
-    } else if (
-      croupierCount < playerCount &&
-      playerHand.length == croupierHand.length &&
-      croupierCount > 16
-    ) {
-      console.log("win");
-    } else if (
-      croupierCount > playerCount &&
-      croupierCount < 21 &&
-      croupierHand.length > 1 &&
-      croupierCount > 16
-    ) {
-      console.log("loose");
-    } else if (croupierCount === playerCount && croupierCount > 0) {
-      console.log("draw");
-    } else if (
-      croupierCount < playerCount &&
-      playerCount < 21 &&
-      croupierHand.length >= playerHand.length &&
-      croupierCount > 16
-    ) {
-      console.log("win");
-    } else if (
-      playerCount < croupierCount &&
-      croupierHand.length === 3 &&
-      croupierCount < 21
-    ) {
-      console.log("loose");
-    } else if (
-      playerCount > croupierCount &&
-      croupierHand.length > playerHand.length
-    ) {
-      console.log("win");
-    }
-  }
-
   function countPlayer(playerHand: Array<Card>) {
-    //console.log(playerHand);
     let playerCount = 0;
     for (const card of playerHand) {
-      //console.log(card.value);
       playerCount = playerCount + checkValue(card.value);
     }
     setPlayerCount(playerCount);
+  }
 
-    /*if (playerCount > 21) {
-      setGameOver(true);
-      setGameStatus("You loose!");
-      //console.log("You Lost!");
-    } else if (playerCount === 21) {
-      setWinner(true);
-      setGameStatus("You Won!");
-      setActionBtnsDisabled(true);
-      //console.log("You WON!");
-    }*/
+  function countDealer(dealerHand: Array<Card>) {
+    let dealerCount = 0;
+    for (const card of dealerHand) {
+      dealerCount = dealerCount + checkValue(card.value);
+    }
+    setdealerCount(dealerCount);
+  }
+
+  function compareCounts(playerCount: number, dealerCount: number) {
+    if (playerCount > dealerCount) {
+      console.log("win");
+      console.log(playerCount, dealerCount);
+    } else if (playerCount < dealerCount) {
+      console.log("loose");
+      console.log(playerCount, dealerCount);
+    } else {
+      console.log("draw");
+      console.log(playerCount, dealerCount);
+    }
   }
 
   useEffect(() => {
-    //console.log(playerHand);
+    if (gameOn) {
+      if (playerCount >= 21) {
+        console.log("win!");
+      }
+    }
+  }, [gameOn]);
+
+  useEffect(() => {
     countPlayer(playerHand);
-    countCroupier(croupierHand);
+    countDealer(dealerHand);
+  }, [
+    gameOn,
+    playerHand,
+    dealerHand,
+    cardsCountDisplayDealer,
+    cardsCountDisplayPlayer,
+  ]);
+
+  useEffect(() => {
+    if (playerHand.length > 2) {
+      if (playerCount > 21) {
+        console.log("loose");
+      } else if (playerCount === 21) {
+        console.log("win");
+      }
+    }
   }, [playerHand]);
 
   useEffect(() => {
-    roundChecker(playerCount, croupierCount, playerHand, croupierHand);
-  }, [playerCount, croupierCount]);
+    if (isDealerTurn && cardsCountDisplayDealer === 2) {
+      if (dealerCount >= 21) {
+        console.log("loose");
+      } else if (dealerCount < 17) {
+        console.log(`dealer count when 3rd card shown: ${dealerCount}`);
+        setcardsCountDisplayDealer(3);
+      } else {
+        compareCounts(playerCount, dealerCount);
+      }
+    } else if (isDealerTurn && dealerCount < 21) {
+      compareCounts(playerCount, dealerCount);
+    } else if (isDealerTurn) {
+      console.log("win");
+      compareCounts(playerCount, dealerCount);
+    }
+  }, [cardsCountDisplayDealer, dealerCount, isDealerTurn, playerCount]);
 
   return {
     startGame,
     playerDeck,
-    croupierDeck,
+    dealerDeck,
     gameOn,
     cardsCountDisplayPlayer,
     playerHand,
-    croupierHand,
+    dealerHand,
     playerCount,
-    croupierCount,
+    dealerCount,
     handleHit,
     handleStand,
     actionBtnsDisabled,
