@@ -47,6 +47,8 @@ export default function useGame() {
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
 
   const [gameOn, setGameOn] = useState<boolean>(false);
+  const [roundNo, setRoundNo] = useState<number>(0);
+  const [roundHistory, setRoundHistory] = useState([{}]);
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
@@ -59,8 +61,7 @@ export default function useGame() {
 
   const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
 
-  let roundNo = 1;
-  let roundHistory = {};
+  // let roundHistory = [{}];
 
   async function getDeck() {
     const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=6`;
@@ -86,6 +87,7 @@ export default function useGame() {
 
   function startGame() {
     setGameOn(true);
+    setRoundNo(roundNo + 1);
     setroundState("In progress");
     getDeck().then((deckData) => {
       splitCards(deckData);
@@ -107,13 +109,6 @@ export default function useGame() {
   }
 
   function handleNewRound() {
-    roundHistory = {
-      ...roundHistory,
-      playerHand: playerHand,
-      playerCount: playerCount,
-      dealerHand: dealerHand,
-      dealerCount: dealerCount,
-    };
     setroundState("In progress");
     setPlayerDeck([]);
     setdealerDeck([]);
@@ -124,9 +119,7 @@ export default function useGame() {
       splitCards(deckData);
       setActionBtnsDisabled(false);
     });
-    roundNo++;
-    console.log(`Round no: ${roundNo}`);
-    console.log(roundHistory);
+    setRoundNo(roundNo + 1);
   }
 
   function compareCounts(playerCount: number, dealerCount: number) {
@@ -155,8 +148,20 @@ export default function useGame() {
       setIsRoundBtnDisabled(true);
     } else {
       setIsRoundBtnDisabled(false);
+      setRoundHistory([
+        ...roundHistory,
+        {
+          playerHand: playerHand,
+          playerCount: playerCount,
+          dealerHand: dealerHand,
+          dealerCount: dealerCount,
+        },
+      ]);
+
+      console.log(`Round no: ${roundNo}`);
+      console.log(roundHistory);
     }
-  }, [roundState]);
+  }, [roundState, roundNo]);
 
   useEffect(() => {
     if (gameOn) {
@@ -166,6 +171,15 @@ export default function useGame() {
       }
     }
   }, [gameOn, playerCount]);
+
+  useEffect(() => {
+    if (roundNo > 4 && roundState !== "In progress") {
+      //setGameOn(false);
+      setIsRoundBtnDisabled(true);
+      setActionBtnsDisabled(true);
+      setGameOn(false);
+    }
+  }, [roundNo, gameOn, roundState]);
 
   useEffect(() => {
     if (isDealerTurn && cardsCountDisplayDealer === 2) {
@@ -213,5 +227,6 @@ export default function useGame() {
     actionBtnsDisabled,
     handleNewRound,
     isRoundBtnDisabled,
+    roundNo,
   };
 }

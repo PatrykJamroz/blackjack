@@ -24,9 +24,7 @@ export default function Game() {
         </div>
         Player Cards {game.playerCount}
       </div>
-      <div>
-        <p>game status</p>
-      </div>
+      <div>Round: {game.roundNo}</div>
       <div>
         <button
           onClick={game.handleHit}
