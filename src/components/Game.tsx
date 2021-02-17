@@ -52,10 +52,17 @@ export default function Game() {
         <button>Bet</button>
       </div>
       <input></input>
-      <button onClick={game.startGame} disabled={game.gameOn ? true : false}>
+      <button onClick={game.startGame} disabled={game.isGameOn ? true : false}>
         New game
       </button>
-      <div>History component</div>
+      <div>
+        <div>Round History</div>
+        <div>
+          {game.playerHand.map((card) => {
+            <p>{card.value}</p>;
+          })}
+        </div>
+      </div>
     </div>
   );
 }

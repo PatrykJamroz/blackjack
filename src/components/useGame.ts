@@ -46,14 +46,14 @@ export default function useGame() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
 
-  const [gameOn, setGameOn] = useState<boolean>(false);
+  const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [roundNo, setRoundNo] = useState<number>(0);
   const [roundHistory, setRoundHistory] = useState([{}]);
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
 
-  const [roundState, setroundState] = useState<RoundState>(null);
+  const [roundState, setRoundState] = useState<RoundState>(null);
   //const [roundLoose, setRoundLoose] = useState<boolean>(false);
 
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
@@ -71,24 +71,26 @@ export default function useGame() {
   }
 
   function splitCards(deck: Deck) {
-    let playerDeck = [];
-    let dealerDeck = [];
+    let pDeck = [];
+    let dDeck = [];
     for (const [index, card] of Object.entries(deck.cards)) {
       const i = Number(index);
       if (i % 2 == 0) {
-        dealerDeck.push(card);
+        dDeck.push(card);
       } else {
-        playerDeck.push(card);
+        pDeck.push(card);
       }
     }
-    setPlayerDeck(playerDeck);
-    setdealerDeck(dealerDeck);
+    setPlayerDeck(pDeck);
+    setdealerDeck(dDeck);
   }
 
   function startGame() {
-    setGameOn(true);
-    setRoundNo(roundNo + 1);
-    setroundState("In progress");
+    setIsGameOn(true);
+    setCardsCountDisplayPlayer(2);
+    setcardsCountDisplayDealer(1);
+    setRoundNo(1);
+    setRoundState("In progress");
     getDeck().then((deckData) => {
       splitCards(deckData);
       setActionBtnsDisabled(false);
@@ -98,6 +100,7 @@ export default function useGame() {
   function handleHit() {
     setIsDealerTurn(true);
     setActionBtnsDisabled(true);
+    setIsRoundBtnDisabled(false);
     setCardsCountDisplayPlayer(3);
     setcardsCountDisplayDealer(2);
   }
@@ -105,11 +108,13 @@ export default function useGame() {
   function handleStand() {
     setIsDealerTurn(true);
     setActionBtnsDisabled(true);
+    setIsRoundBtnDisabled(false);
     setcardsCountDisplayDealer(2);
   }
 
   function handleNewRound() {
-    setroundState("In progress");
+    setIsRoundBtnDisabled(true);
+    setRoundState("In progress");
     setPlayerDeck([]);
     setdealerDeck([]);
     setCardsCountDisplayPlayer(2);
@@ -124,15 +129,15 @@ export default function useGame() {
 
   function compareCounts(playerCount: number, dealerCount: number) {
     if (playerCount > dealerCount) {
-      setroundState("Win");
+      setRoundState("Win");
       console.log("win");
       console.log(playerCount, dealerCount);
     } else if (playerCount < dealerCount) {
-      setroundState("Loose");
+      setRoundState("Loose");
       console.log("loose");
       console.log(playerCount, dealerCount);
     } else {
-      setroundState("Draw");
+      setRoundState("Draw");
       console.log("draw");
       console.log(playerCount, dealerCount);
     }
@@ -143,71 +148,53 @@ export default function useGame() {
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
 
-  useEffect(() => {
-    if (roundState === "In progress" || roundState === null) {
-      setIsRoundBtnDisabled(true);
-    } else {
-      setIsRoundBtnDisabled(false);
-      setRoundHistory([
-        ...roundHistory,
-        {
-          playerHand: playerHand,
-          playerCount: playerCount,
-          dealerHand: dealerHand,
-          dealerCount: dealerCount,
-        },
-      ]);
-
-      console.log(`Round no: ${roundNo}`);
-      console.log(roundHistory);
-    }
-  }, [roundState, roundNo]);
+  //   useEffect(() => {
+  //     if (isGameOn) {
+  //       if (playerCount === 21) {
+  //         setRoundState("Win");
+  //         console.log("win!");
+  //       }
+  //     }
+  //   }, [isGameOn, playerCount]);
 
   useEffect(() => {
-    if (gameOn) {
-      if (playerCount === 21) {
-        setroundState("Win");
-        console.log("win!");
-      }
-    }
-  }, [gameOn, playerCount]);
-
-  useEffect(() => {
-    if (roundNo > 4 && roundState !== "In progress") {
-      //setGameOn(false);
-      setIsRoundBtnDisabled(true);
+    if (roundState !== "In progress") {
       setActionBtnsDisabled(true);
-      setGameOn(false);
     }
-  }, [roundNo, gameOn, roundState]);
+
+    if (roundState !== "In progress" && roundNo === 5) {
+      setIsGameOn(false);
+      setIsRoundBtnDisabled(true);
+    }
+  }, [roundState]);
 
   useEffect(() => {
     if (isDealerTurn && cardsCountDisplayDealer === 2) {
       if (dealerCount > 21) {
-        setroundState("Win");
+        setRoundState("Win");
         console.log("win");
       } else if (dealerCount < 17) {
         console.log(`dealer count when 3rd card shown: ${dealerCount}`);
         setcardsCountDisplayDealer(3);
       } else if (dealerCount === 21) {
-        setroundState("Loose");
+        setRoundState("Loose");
         console.log("loose");
       } else if (playerCount > 21) {
-        setroundState("Loose");
+        setRoundState("Loose");
         console.log("loose");
       } else {
         compareCounts(playerCount, dealerCount);
       }
     } else if (isDealerTurn && playerCount > 21) {
-      setroundState("Loose");
+      setRoundState("Loose");
       console.log("loose");
     } else if (isDealerTurn && dealerCount < 21 && playerCount < 21) {
       compareCounts(playerCount, dealerCount);
     } else if (isDealerTurn && dealerCount === 21) {
-      setroundState("Loose");
+      setRoundState("Loose");
       console.log("loose");
     } else if (isDealerTurn && dealerCount > 21) {
-      setroundState("Win");
+      setRoundState("Win");
       console.log("win");
     }
   }, [cardsCountDisplayDealer, dealerCount, isDealerTurn, playerCount]);
@@ -216,7 +203,7 @@ export default function useGame() {
     startGame,
     playerDeck,
     dealerDeck,
-    gameOn,
+    isGameOn,
     cardsCountDisplayPlayer,
     playerHand,
     dealerHand,
@@ -228,5 +215,6 @@ export default function useGame() {
     handleNewRound,
     isRoundBtnDisabled,
     roundNo,
+    roundHistory,
   };
 }
