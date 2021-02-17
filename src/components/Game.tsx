@@ -25,7 +25,7 @@ export default function Game() {
         Player Cards {game.playerCount}
       </div>
       <div>
-        <p>{game.gameStatus}</p>
+        <p>game status</p>
       </div>
       <div>
         <button
@@ -42,6 +42,12 @@ export default function Game() {
         </button>
         <button>Double</button>
       </div>
+      <button
+        onClick={game.handleNewRound}
+        disabled={game.isRoundBtnDisabled ? true : false}
+      >
+        New Round
+      </button>
       <div>
         <p>Credit: $1000</p>
         <input></input>
