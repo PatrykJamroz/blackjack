@@ -58,8 +58,21 @@ export default function Game() {
       <div>
         <div>Round History</div>
         <div>
-          {game.playerHand.map((card) => {
-            <p>{card.value}</p>;
+          {game.roundHistory.map((obj) => {
+            <p>Round: {obj.round}</p>;
+            <p>Player Score: {obj.playerCount}</p>;
+            {
+              obj.playerHand.map((array) => {
+                return <p>{array.code}</p>;
+              });
+            }
+            <p>Round: {obj.round}</p>;
+            <p>Dealer Score: {obj.dealerCount}</p>;
+            {
+              obj.dealerHand.map((array) => {
+                return <p>{array.code}</p>;
+              });
+            }
           })}
         </div>
       </div>

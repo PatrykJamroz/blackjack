@@ -191,6 +191,7 @@ export default function useGame() {
             dealerCount: dealerCount,
           },
         ]);
+        console.log(roundHistory);
         break;
     }
   }, [roundState]);
