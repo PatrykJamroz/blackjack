@@ -86,21 +86,23 @@ export default function useGame() {
   }
 
   function startGame() {
+    setIsDealerTurn(false);
+    setPlayerDeck([]);
+    setdealerDeck([]);
     setIsGameOn(true);
+    setRoundState("In progress");
     setCardsCountDisplayPlayer(2);
     setcardsCountDisplayDealer(1);
     setRoundNo(1);
-    setRoundState("In progress");
+    setActionBtnsDisabled(false);
     getDeck().then((deckData) => {
       splitCards(deckData);
-      setActionBtnsDisabled(false);
     });
   }
 
   function handleHit() {
     setIsDealerTurn(true);
     setActionBtnsDisabled(true);
-    setIsRoundBtnDisabled(false);
     setCardsCountDisplayPlayer(3);
     setcardsCountDisplayDealer(2);
   }
@@ -108,12 +110,10 @@ export default function useGame() {
   function handleStand() {
     setIsDealerTurn(true);
     setActionBtnsDisabled(true);
-    setIsRoundBtnDisabled(false);
     setcardsCountDisplayDealer(2);
   }
 
   function handleNewRound() {
-    setIsRoundBtnDisabled(true);
     setRoundState("In progress");
     setPlayerDeck([]);
     setdealerDeck([]);
@@ -128,18 +128,15 @@ export default function useGame() {
   }
 
   function compareCounts(playerCount: number, dealerCount: number) {
-    if (playerCount > dealerCount) {
-      setRoundState("Win");
-      console.log("win");
-      console.log(playerCount, dealerCount);
-    } else if (playerCount < dealerCount) {
+    if (dealerCount > playerCount) {
       setRoundState("Loose");
       console.log("loose");
-      console.log(playerCount, dealerCount);
+    } else if (dealerCount < playerCount) {
+      setRoundState("Win");
+      console.log("win");
     } else {
       setRoundState("Draw");
       console.log("draw");
-      console.log(playerCount, dealerCount);
     }
   }
 
@@ -148,31 +145,28 @@ export default function useGame() {
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
 
-  // useEffect(() => {
-  //   if (isGameOn) {
-  //     if (playerCount === 21) {
-  //       setRoundState("Win");
-  //       console.log("win!");
-  //     }
-  //   }
-  // }, [isGameOn]);
+  useEffect(() => {
+    if (roundState === null) {
+      setIsRoundBtnDisabled(true);
+    } else if (roundState === "In progress") {
+      setIsRoundBtnDisabled(true);
+    } else if (roundNo === 5) {
+      setIsRoundBtnDisabled(true);
+    } else {
+      setIsRoundBtnDisabled(false);
+    }
+  }, [roundState, roundNo]);
 
   useEffect(() => {
     if (roundState !== "In progress") {
       setActionBtnsDisabled(true);
+      //console.log("set buttons disabled");
     }
 
     if (roundState !== "In progress" && roundNo === 5) {
       setIsGameOn(false);
-      setIsRoundBtnDisabled(true);
     }
-  }, [roundState]);
-
-  //   useEffect(() => {
-  //     if (dealerCount < 17 && isDealerTurn) {
-  //       setcardsCountDisplayDealer(3);
-  //     }
-  //   }, [cardsCountDisplayDealer]);
+  }, [roundState, roundNo]);
 
   useEffect(() => {
     if (isGameOn) {
@@ -199,7 +193,8 @@ export default function useGame() {
               console.log("draw");
             } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
               setcardsCountDisplayDealer(3);
-            } else if (dealerCount < 17 && cardsCountDisplayDealer === 3) {
+            } else if (cardsCountDisplayDealer === 3) {
+              // dealerCount < 17 &&
               if (dealerCount === 21) {
                 setRoundState("Draw");
                 console.log("draw");
@@ -209,7 +204,7 @@ export default function useGame() {
               }
             } else {
               setRoundState("Win");
-              console.log("win");
+              console.log("win"); //lost?
             }
           } else {
             if (cardsCountDisplayDealer === 1) {
@@ -219,7 +214,8 @@ export default function useGame() {
               console.log("loose");
             } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
               setcardsCountDisplayDealer(3);
-            } else if (dealerCount < 17 && cardsCountDisplayDealer === 3) {
+            } else if (cardsCountDisplayDealer === 3) {
+              //dealerCount < 17 &&
               if (dealerCount === 21) {
                 setRoundState("Loose");
                 console.log("loose");
@@ -237,16 +233,7 @@ export default function useGame() {
                 console.log("draw");
               }
             } else {
-              if (dealerCount > playerCount) {
-                setRoundState("Loose");
-                console.log("loose");
-              } else if (dealerCount < playerCount) {
-                setRoundState("Win");
-                console.log("win");
-              } else {
-                setRoundState("Draw");
-                console.log("draw");
-              }
+              compareCounts(playerCount, dealerCount);
             }
           }
         } else if (cardsCountDisplayPlayer === 2 && isDealerTurn) {
@@ -257,7 +244,8 @@ export default function useGame() {
             console.log("loose");
           } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
             setcardsCountDisplayDealer(3);
-          } else if (dealerCount < 17 && cardsCountDisplayDealer === 3) {
+          } else if (cardsCountDisplayDealer === 3) {
+            //dealerCount < 17 &&
             if (dealerCount === 21) {
               setRoundState("Loose");
               console.log("loose");
@@ -275,48 +263,10 @@ export default function useGame() {
               console.log("draw");
             }
           } else {
-            if (dealerCount > playerCount) {
-              setRoundState("Loose");
-              console.log("loose");
-            } else if (dealerCount < playerCount) {
-              setRoundState("Win");
-              console.log("win");
-            } else {
-              setRoundState("Draw");
-              console.log("draw");
-            }
+            compareCounts(playerCount, dealerCount);
           }
         }
       }
-
-      // if (isDealerTurn && cardsCountDisplayDealer === 2) {
-      //   if (dealerCount > 21) {
-      //     setRoundState("Win");
-      //     console.log("win");
-      //   } else if (dealerCount < 17) {
-      //     console.log(`dealer count when 3rd card shown: ${dealerCount}`);
-      //     setcardsCountDisplayDealer(3);
-      //   } else if (dealerCount === 21) {
-      //     setRoundState("Loose");
-      //     console.log("loose");
-      //   } else if (playerCount > 21) {
-      //     setRoundState("Loose");
-      //     console.log("loose");
-      //   } else {
-      //     compareCounts(playerCount, dealerCount);
-      //   }
-      // } else if (isDealerTurn && playerCount > 21) {
-      //   setRoundState("Loose");
-      //   console.log("loose");
-      // } else if (isDealerTurn && dealerCount < 21 && playerCount < 21) {
-      //   compareCounts(playerCount, dealerCount);
-      // } else if (isDealerTurn && dealerCount === 21) {
-      //   setRoundState("Loose");
-      //   console.log("loose");
-      // } else if (isDealerTurn && dealerCount > 21) {
-      //   setRoundState("Win");
-      //   console.log("win");
-      // }
     }
   }, [
     dealerCount,
@@ -326,8 +276,6 @@ export default function useGame() {
     cardsCountDisplayPlayer,
     isGameOn,
   ]);
-
-  //[cardsCountDisplayDealer, dealerCount, isDealerTurn, playerCount]
 
   return {
     startGame,
