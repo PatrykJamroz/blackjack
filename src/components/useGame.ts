@@ -322,5 +322,6 @@ export default function useGame() {
     isRoundBtnDisabled,
     roundNo,
     roundHistory,
+    roundState,
   };
 }

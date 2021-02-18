@@ -7,22 +7,43 @@ export default function Game() {
 
   return (
     <div>
-      <div>
-        dealer Cards: {game.dealerCount}
+      <div
+        style={{
+          height: "165px",
+        }}
+      >
+        Dealer hand: {game.dealerCount}
         <div style={{ display: "flex" }}>
           {game.dealerHand.map((card, index) => (
             <Card image={card.image} key={index} />
           ))}
         </div>
       </div>
-      <hr />
-      <div>
+
+      <h4>
+        {
+          game.roundState === null
+            ? "Click New Game button to start..."
+            : game.roundState === "In progress"
+            ? "Hit or Stand!"
+            : game.roundState
+          /* {game.roundState !== null
+          ? game.roundState
+          : "Click New Game button to start..."} */
+        }
+      </h4>
+
+      <div
+        style={{
+          height: "170px",
+        }}
+      >
         <div style={{ display: "flex" }}>
           {game.playerHand.map((card, index) => (
             <Card image={card.image} key={index} />
           ))}
         </div>
-        Player Cards {game.playerCount}
+        Player hand: {game.playerCount}
       </div>
       <div>Round: {game.roundNo}</div>
       <div>
@@ -58,21 +79,26 @@ export default function Game() {
       <div>
         <div>Round History</div>
         <div>
-          {game.roundHistory.map((obj) => {
-            <p>Round: {obj.round}</p>;
-            <p>Player Score: {obj.playerCount}</p>;
-            {
-              obj.playerHand.map((array) => {
-                return <p>{array.code}</p>;
-              });
-            }
-            <p>Round: {obj.round}</p>;
-            <p>Dealer Score: {obj.dealerCount}</p>;
-            {
-              obj.dealerHand.map((array) => {
-                return <p>{array.code}</p>;
-              });
-            }
+          {game.roundHistory.map((obj, index) => {
+            return (
+              <div key={index}>
+                <p>Round: {obj.round}</p>
+                <p>
+                  Player Score: {obj.playerCount} (
+                  {obj.playerHand.map((array, index) => {
+                    return <span key={index}>{array.code} </span>;
+                  })}
+                  )
+                </p>
+                <p>
+                  Dealer Score: {obj.dealerCount} (
+                  {obj.dealerHand.map((array, index) => {
+                    return <span key={index}>{array.code} </span>;
+                  })}
+                  )
+                </p>
+              </div>
+            );
           })}
         </div>
       </div>
