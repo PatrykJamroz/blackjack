@@ -42,13 +42,21 @@ function count(cards: Array<Card>): number {
   return playerCount;
 }
 
+interface IroundHistory {
+  round: number;
+  playerHand: Card[];
+  playerCount: number;
+  dealerHand: Card[];
+  dealerCount: number;
+}
+
 export default function useGame() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
 
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [roundNo, setRoundNo] = useState<number>(0);
-  const [roundHistory, setRoundHistory] = useState([{}]);
+  const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>([]);
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
@@ -167,6 +175,25 @@ export default function useGame() {
       setIsGameOn(false);
     }
   }, [roundState, roundNo]);
+
+  useEffect(() => {
+    switch (roundState) {
+      case "Win":
+      case "Loose":
+      case "Draw":
+        setRoundHistory([
+          ...roundHistory,
+          {
+            round: roundNo,
+            playerHand: playerHand,
+            playerCount: playerCount,
+            dealerHand: dealerHand,
+            dealerCount: dealerCount,
+          },
+        ]);
+        break;
+    }
+  }, [roundState]);
 
   useEffect(() => {
     if (isGameOn) {
