@@ -148,14 +148,14 @@ export default function useGame() {
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
 
-  //   useEffect(() => {
-  //     if (isGameOn) {
-  //       if (playerCount === 21) {
-  //         setRoundState("Win");
-  //         console.log("win!");
-  //       }
+  // useEffect(() => {
+  //   if (isGameOn) {
+  //     if (playerCount === 21) {
+  //       setRoundState("Win");
+  //       console.log("win!");
   //     }
-  //   }, [isGameOn, playerCount]);
+  //   }
+  // }, [isGameOn]);
 
   useEffect(() => {
     if (roundState !== "In progress") {
@@ -168,36 +168,166 @@ export default function useGame() {
     }
   }, [roundState]);
 
+  //   useEffect(() => {
+  //     if (dealerCount < 17 && isDealerTurn) {
+  //       setcardsCountDisplayDealer(3);
+  //     }
+  //   }, [cardsCountDisplayDealer]);
+
   useEffect(() => {
-    if (isDealerTurn && cardsCountDisplayDealer === 2) {
-      if (dealerCount > 21) {
-        setRoundState("Win");
-        console.log("win");
-      } else if (dealerCount < 17) {
-        console.log(`dealer count when 3rd card shown: ${dealerCount}`);
-        setcardsCountDisplayDealer(3);
-      } else if (dealerCount === 21) {
-        setRoundState("Loose");
-        console.log("loose");
-      } else if (playerCount > 21) {
-        setRoundState("Loose");
-        console.log("loose");
+    if (isGameOn) {
+      if (!isDealerTurn && playerCount === 21) {
+        if (cardsCountDisplayDealer === 1) {
+          setcardsCountDisplayDealer(2);
+        } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
+          setRoundState("Draw");
+          console.log("draw");
+        } else {
+          setRoundState("Win");
+          console.log("BlackJack!");
+        }
       } else {
-        compareCounts(playerCount, dealerCount);
+        if (cardsCountDisplayPlayer === 3) {
+          if (playerCount > 21) {
+            setRoundState("Loose");
+            console.log("loose");
+          } else if (playerCount === 21) {
+            if (cardsCountDisplayDealer === 1) {
+              setcardsCountDisplayDealer(2);
+            } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
+              setRoundState("Draw");
+              console.log("draw");
+            } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
+              setcardsCountDisplayDealer(3);
+            } else if (dealerCount < 17 && cardsCountDisplayDealer === 3) {
+              if (dealerCount === 21) {
+                setRoundState("Draw");
+                console.log("draw");
+              } else {
+                setRoundState("Win");
+                console.log("win");
+              }
+            } else {
+              setRoundState("Win");
+              console.log("win");
+            }
+          } else {
+            if (cardsCountDisplayDealer === 1) {
+              setcardsCountDisplayDealer(2);
+            } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
+              setRoundState("Loose");
+              console.log("loose");
+            } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
+              setcardsCountDisplayDealer(3);
+            } else if (dealerCount < 17 && cardsCountDisplayDealer === 3) {
+              if (dealerCount === 21) {
+                setRoundState("Loose");
+                console.log("loose");
+              } else if (dealerCount > 21) {
+                setRoundState("Win");
+                console.log("win");
+              } else if (dealerCount > playerCount) {
+                setRoundState("Loose");
+                console.log("loose");
+              } else if (dealerCount < playerCount) {
+                setRoundState("Win");
+                console.log("win");
+              } else {
+                setRoundState("Draw");
+                console.log("draw");
+              }
+            } else {
+              if (dealerCount > playerCount) {
+                setRoundState("Loose");
+                console.log("loose");
+              } else if (dealerCount < playerCount) {
+                setRoundState("Win");
+                console.log("win");
+              } else {
+                setRoundState("Draw");
+                console.log("draw");
+              }
+            }
+          }
+        } else if (cardsCountDisplayPlayer === 2 && isDealerTurn) {
+          if (cardsCountDisplayDealer === 1) {
+            setcardsCountDisplayDealer(2);
+          } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
+            setRoundState("Loose");
+            console.log("loose");
+          } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
+            setcardsCountDisplayDealer(3);
+          } else if (dealerCount < 17 && cardsCountDisplayDealer === 3) {
+            if (dealerCount === 21) {
+              setRoundState("Loose");
+              console.log("loose");
+            } else if (dealerCount > 21) {
+              setRoundState("Win");
+              console.log("win");
+            } else if (dealerCount > playerCount) {
+              setRoundState("Loose");
+              console.log("loose");
+            } else if (dealerCount < playerCount) {
+              setRoundState("Win");
+              console.log("win");
+            } else {
+              setRoundState("Draw");
+              console.log("draw");
+            }
+          } else {
+            if (dealerCount > playerCount) {
+              setRoundState("Loose");
+              console.log("loose");
+            } else if (dealerCount < playerCount) {
+              setRoundState("Win");
+              console.log("win");
+            } else {
+              setRoundState("Draw");
+              console.log("draw");
+            }
+          }
+        }
       }
-    } else if (isDealerTurn && playerCount > 21) {
-      setRoundState("Loose");
-      console.log("loose");
-    } else if (isDealerTurn && dealerCount < 21 && playerCount < 21) {
-      compareCounts(playerCount, dealerCount);
-    } else if (isDealerTurn && dealerCount === 21) {
-      setRoundState("Loose");
-      console.log("loose");
-    } else if (isDealerTurn && dealerCount > 21) {
-      setRoundState("Win");
-      console.log("win");
+
+      // if (isDealerTurn && cardsCountDisplayDealer === 2) {
+      //   if (dealerCount > 21) {
+      //     setRoundState("Win");
+      //     console.log("win");
+      //   } else if (dealerCount < 17) {
+      //     console.log(`dealer count when 3rd card shown: ${dealerCount}`);
+      //     setcardsCountDisplayDealer(3);
+      //   } else if (dealerCount === 21) {
+      //     setRoundState("Loose");
+      //     console.log("loose");
+      //   } else if (playerCount > 21) {
+      //     setRoundState("Loose");
+      //     console.log("loose");
+      //   } else {
+      //     compareCounts(playerCount, dealerCount);
+      //   }
+      // } else if (isDealerTurn && playerCount > 21) {
+      //   setRoundState("Loose");
+      //   console.log("loose");
+      // } else if (isDealerTurn && dealerCount < 21 && playerCount < 21) {
+      //   compareCounts(playerCount, dealerCount);
+      // } else if (isDealerTurn && dealerCount === 21) {
+      //   setRoundState("Loose");
+      //   console.log("loose");
+      // } else if (isDealerTurn && dealerCount > 21) {
+      //   setRoundState("Win");
+      //   console.log("win");
+      // }
     }
-  }, [cardsCountDisplayDealer, dealerCount, isDealerTurn, playerCount]);
+  }, [
+    dealerCount,
+    playerCount,
+    isDealerTurn,
+    cardsCountDisplayDealer,
+    cardsCountDisplayPlayer,
+    isGameOn,
+  ]);
+
+  //[cardsCountDisplayDealer, dealerCount, isDealerTurn, playerCount]
 
   return {
     startGame,
