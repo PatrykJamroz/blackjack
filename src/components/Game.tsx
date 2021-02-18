@@ -14,9 +14,16 @@ export default function Game() {
       >
         Dealer hand: {game.dealerCount}
         <div style={{ display: "flex" }}>
-          {game.dealerHand.map((card, index) => (
-            <Card image={card.image} key={index} />
-          ))}
+          {game.roundState === null ? (
+            <img
+              src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg"
+              style={{ height: "150px" }}
+            />
+          ) : (
+            game.dealerHand.map((card, index) => (
+              <Card image={card.image} key={index} />
+            ))
+          )}
         </div>
       </div>
 
@@ -39,9 +46,16 @@ export default function Game() {
         }}
       >
         <div style={{ display: "flex" }}>
-          {game.playerHand.map((card, index) => (
-            <Card image={card.image} key={index} />
-          ))}
+          {game.roundState === null ? (
+            <img
+              src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg"
+              style={{ height: "150px" }}
+            />
+          ) : (
+            game.playerHand.map((card, index) => (
+              <Card image={card.image} key={index} />
+            ))
+          )}
         </div>
         Player hand: {game.playerCount}
       </div>
