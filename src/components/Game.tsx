@@ -101,7 +101,7 @@ export default function Game() {
       </div>
       <button
         onClick={game.startGame}
-        disabled={game.isGameOn || game.isBetFaulty ? true : false}
+        disabled={/*game.isGameOn ||*/ game.isBetFaulty ? true : false}
       >
         New game
       </button>

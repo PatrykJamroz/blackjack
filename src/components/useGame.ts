@@ -16,7 +16,7 @@ interface Card {
   suit: string;
 }
 
-type RoundState = "Win" | "Loose" | "Draw" | "In progress" | null;
+type RoundState = "Win" | "Loose" | "Draw" | "In progress" | "Game over" | null;
 
 function getValue(props: string): number {
   if (props === "ACE") {
@@ -99,12 +99,12 @@ export default function useGame() {
   }
 
   function startGame() {
+    setIsGameOn(true);
     setIsDealerTurn(false);
     setCredit(1000);
     setRoundHistory([]);
     setPlayerDeck([]);
     setdealerDeck([]);
-    setIsGameOn(true);
     setRoundState("In progress");
     setCardsCountDisplayPlayer(2);
     setcardsCountDisplayDealer(1);
@@ -177,7 +177,7 @@ export default function useGame() {
 
   useEffect(() => {
     bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
-  }, [bet]);
+  }, [bet, credit]);
 
   useEffect(() => {
     if (roundState === null) {
@@ -186,10 +186,12 @@ export default function useGame() {
       setIsRoundBtnDisabled(true);
     } else if (roundNo === 5) {
       setIsRoundBtnDisabled(true);
+    } else if (!isGameOn) {
+      setIsRoundBtnDisabled(true);
     } else {
       setIsRoundBtnDisabled(false);
     }
-  }, [roundState, roundNo]);
+  }, [roundState, roundNo, isGameOn]);
 
   useEffect(() => {
     if (roundState !== "In progress") {
@@ -201,6 +203,15 @@ export default function useGame() {
       setIsGameOn(false);
     }
   }, [roundState, roundNo]);
+
+  useEffect(() => {
+    if (credit === 0) {
+      setIsGameOn(false);
+      setRoundState("Game over");
+      console.log("out of credits, game over");
+      setCredit(1000);
+    }
+  }, [credit]);
 
   useEffect(() => {
     switch (roundState) {
