@@ -83,7 +83,7 @@ export default function Game() {
         Bet must be a number between 1 and {game.credit}!
       </p>
       <div>
-        <p>Credit: ${game.credit}</p>
+        <p>Credit: ${game.roundNo === 5 ? game.prevCredit : game.credit}</p>
         Your bet:
         <input
           name="betInput"

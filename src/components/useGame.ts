@@ -1,5 +1,5 @@
 import { type } from "os";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Deck {
   success: boolean;
@@ -177,6 +177,10 @@ export default function useGame() {
     }
   }
 
+  //   function creditOrPrevCredit() {
+  //       if()
+  //   }
+
   function compareCounts(playerCount: number, dealerCount: number) {
     if (dealerCount > playerCount) {
       setRoundState("Loose");
@@ -194,13 +198,31 @@ export default function useGame() {
   const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
-  const rankSorted = rank.sort((a, b) => {
-    return a.credit - b.credit;
-  });
+  const rankSorted = rank
+    .sort((a, b) => {
+      return b.credit - a.credit;
+    })
+    .filter((data) => {
+      return data.credit !== 0;
+    });
+
+  useEffect(() => {
+    if (!isGameOn) {
+      setCredit(1000);
+    }
+  }, [isGameOn]); /////////////////
 
   useEffect(() => {
     bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
   }, [bet, credit]);
+
+  const prevCreditRef = useRef<number>();
+
+  useEffect(() => {
+    prevCreditRef.current = credit;
+  });
+
+  const prevCredit = prevCreditRef.current;
 
   useEffect(() => {
     if (roundState === null) {
@@ -248,7 +270,7 @@ export default function useGame() {
           date: todayDate,
         },
       ]);
-      setCredit(1000);
+      //setCredit(1000);
     }
   }, [credit]);
 
@@ -413,5 +435,6 @@ export default function useGame() {
     handlePlayerNameChange,
     todayDate,
     rankSorted,
+    prevCredit,
   };
 }
