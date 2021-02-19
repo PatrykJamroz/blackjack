@@ -115,7 +115,21 @@ export default function useGame() {
     setdealerDeck(dDeck);
   }
 
+  function shouldSetRank(roundState: RoundState, rank: any) {
+    if (roundState !== null && roundNo === 5) {
+      setRank([
+        ...rank,
+        {
+          playerName: playerName,
+          credit: prevCredit,
+          date: todayDate,
+        },
+      ]);
+    }
+  }
+
   function startGame() {
+    shouldSetRank(roundState, rank);
     setIsGameOn(true);
     setIsDealerTurn(false);
     setCredit(1000);
@@ -260,14 +274,14 @@ export default function useGame() {
     }
 
     if (roundState !== "In progress" && roundNo === 5) {
-      setRank([
-        ...rank,
-        {
-          playerName: playerName,
-          credit: credit,
-          date: todayDate,
-        },
-      ]);
+      //   setRank([
+      //     ...rank,
+      //     {
+      //       playerName: playerName,
+      //       credit: credit,
+      //       date: todayDate,
+      //     },
+      //   ]);
       setIsGameOn(false);
       console.log("rank set");
     }
