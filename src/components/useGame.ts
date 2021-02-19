@@ -50,6 +50,12 @@ interface IroundHistory {
   dealerCount: number;
 }
 
+const todayDate: string = new Date().toLocaleDateString("en-GB", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+});
+
 export default function useGame() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
@@ -73,6 +79,7 @@ export default function useGame() {
 
   const [credit, setCredit] = useState<number>(1000);
   const [bet, setBet] = useState<number>(200);
+  const [playerName, setPlayerName] = useState<string>("Player");
 
   // let roundHistory = [{}];
 
@@ -144,6 +151,10 @@ export default function useGame() {
 
   function handleBetChange(e: React.FormEvent<HTMLInputElement>) {
     setBet(Number(e.currentTarget.value));
+  }
+
+  function handlePlayerNameChange(e: React.FormEvent<HTMLInputElement>) {
+    setPlayerName(e.currentTarget.value);
   }
 
   function calcCredit(bet: number, roundState: RoundState) {
@@ -370,5 +381,8 @@ export default function useGame() {
     handleBetChange,
     isBetInputDisabled,
     isBetFaulty,
+    playerName,
+    handlePlayerNameChange,
+    todayDate,
   };
 }

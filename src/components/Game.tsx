@@ -91,13 +91,19 @@ export default function Game() {
           value={game.bet}
           onChange={game.handleBetChange}
           disabled={game.isBetInputDisabled}
-          //
-          placeholder={`${game.bet}`}
           autoFocus
         />
       </div>
       <div>
-        Your name:<input></input>
+        Your name:
+        <input
+          name="playerInput"
+          type="text"
+          value={game.playerName}
+          onChange={game.handlePlayerNameChange}
+          disabled={game.isGameOn}
+          autoFocus
+        />
       </div>
       <button
         onClick={game.startGame}
