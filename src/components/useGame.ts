@@ -16,7 +16,7 @@ interface Card {
   suit: string;
 }
 
-type RoundState = "Win" | "Loose" | "Draw" | "In progress" | null;
+type RoundState = "Win" | "Loose" | "Draw" | "In progress" | "Game over" | null;
 
 function getValue(props: string): number {
   if (props === "ACE") {
@@ -66,8 +66,13 @@ export default function useGame() {
 
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(true);
+  const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(false);
+  const [isBetFaulty, setIsBetFaulty] = useState<boolean>(true);
 
   const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
+
+  const [credit, setCredit] = useState<number>(1000);
+  const [bet, setBet] = useState<number>(200);
 
   // let roundHistory = [{}];
 
@@ -94,11 +99,12 @@ export default function useGame() {
   }
 
   function startGame() {
+    setIsGameOn(true);
     setIsDealerTurn(false);
+    setCredit(1000);
     setRoundHistory([]);
     setPlayerDeck([]);
     setdealerDeck([]);
-    setIsGameOn(true);
     setRoundState("In progress");
     setCardsCountDisplayPlayer(2);
     setcardsCountDisplayDealer(1);
@@ -136,6 +142,21 @@ export default function useGame() {
     setRoundNo(roundNo + 1);
   }
 
+  function handleBetChange(e: React.FormEvent<HTMLInputElement>) {
+    setBet(Number(e.currentTarget.value));
+  }
+
+  function calcCredit(bet: number, roundState: RoundState) {
+    switch (roundState) {
+      case "Win":
+        setCredit(credit + 1.5 * bet);
+        break;
+      case "Loose":
+        setCredit(credit - bet);
+        break;
+    }
+  }
+
   function compareCounts(playerCount: number, dealerCount: number) {
     if (dealerCount > playerCount) {
       setRoundState("Loose");
@@ -155,16 +176,22 @@ export default function useGame() {
   const dealerCount = count(dealerHand);
 
   useEffect(() => {
+    bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
+  }, [bet, credit]);
+
+  useEffect(() => {
     if (roundState === null) {
       setIsRoundBtnDisabled(true);
     } else if (roundState === "In progress") {
       setIsRoundBtnDisabled(true);
     } else if (roundNo === 5) {
       setIsRoundBtnDisabled(true);
+    } else if (!isGameOn) {
+      setIsRoundBtnDisabled(true);
     } else {
       setIsRoundBtnDisabled(false);
     }
-  }, [roundState, roundNo]);
+  }, [roundState, roundNo, isGameOn]);
 
   useEffect(() => {
     if (roundState !== "In progress") {
@@ -176,6 +203,15 @@ export default function useGame() {
       setIsGameOn(false);
     }
   }, [roundState, roundNo]);
+
+  useEffect(() => {
+    if (credit === 0) {
+      setIsGameOn(false);
+      setRoundState("Game over");
+      console.log("out of credits, game over");
+      setCredit(1000);
+    }
+  }, [credit]);
 
   useEffect(() => {
     switch (roundState) {
@@ -192,7 +228,12 @@ export default function useGame() {
             dealerCount: dealerCount,
           },
         ]);
+        setIsBetInputDisabled(false);
+        calcCredit(bet, roundState);
         console.log(roundHistory);
+        break;
+      case "In progress":
+        setIsBetInputDisabled(true);
         break;
     }
   }, [roundState]);
@@ -324,5 +365,10 @@ export default function useGame() {
     roundNo,
     roundHistory,
     roundState,
+    credit,
+    bet,
+    handleBetChange,
+    isBetInputDisabled,
+    isBetFaulty,
   };
 }
