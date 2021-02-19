@@ -50,6 +50,12 @@ interface IroundHistory {
   dealerCount: number;
 }
 
+interface Irank {
+  playerName: string;
+  credit: number;
+  date: string;
+}
+
 const todayDate: string = new Date().toLocaleDateString("en-GB", {
   day: "2-digit",
   month: "short",
@@ -63,6 +69,7 @@ export default function useGame() {
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [roundNo, setRoundNo] = useState<number>(0);
   const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>([]);
+  const [rank, setRank] = useState<Array<Irank>>([]);
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
@@ -185,6 +192,9 @@ export default function useGame() {
   const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
+  const rankSorted = rank.sort((a, b) => {
+    return a.credit - b.credit;
+  });
 
   useEffect(() => {
     bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
@@ -212,6 +222,14 @@ export default function useGame() {
 
     if (roundState !== "In progress" && roundNo === 5) {
       setIsGameOn(false);
+      setRank([
+        ...rank,
+        {
+          playerName: playerName,
+          credit: credit,
+          date: todayDate,
+        },
+      ]);
     }
   }, [roundState, roundNo]);
 
@@ -220,6 +238,14 @@ export default function useGame() {
       setIsGameOn(false);
       setRoundState("Game over");
       console.log("out of credits, game over");
+      setRank([
+        ...rank,
+        {
+          playerName: playerName,
+          credit: credit,
+          date: todayDate,
+        },
+      ]);
       setCredit(1000);
     }
   }, [credit]);
@@ -384,5 +410,6 @@ export default function useGame() {
     playerName,
     handlePlayerNameChange,
     todayDate,
+    rankSorted,
   };
 }

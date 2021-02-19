@@ -112,6 +112,20 @@ export default function Game() {
         New game
       </button>
       <div>
+        <div>
+          <p>Rank</p>
+          <ol>
+            {game.rankSorted.map((obj, index) => {
+              return (
+                <div key={index}>
+                  <li>
+                    {obj.playerName} - ${obj.credit} - {obj.date}
+                  </li>
+                </div>
+              );
+            })}
+          </ol>
+        </div>
         <div>Round History</div>
         <div>
           {game.roundHistory.map((obj, index) => {
