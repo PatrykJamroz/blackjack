@@ -66,8 +66,13 @@ export default function useGame() {
 
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(true);
+  const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(false);
+  const [isBetFaulty, setIsBetFaulty] = useState<boolean>(true);
 
   const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
+
+  const [credit, setCredit] = useState<number>(1000);
+  const [bet, setBet] = useState<number>(200);
 
   // let roundHistory = [{}];
 
@@ -95,6 +100,7 @@ export default function useGame() {
 
   function startGame() {
     setIsDealerTurn(false);
+    setCredit(1000);
     setRoundHistory([]);
     setPlayerDeck([]);
     setdealerDeck([]);
@@ -136,6 +142,21 @@ export default function useGame() {
     setRoundNo(roundNo + 1);
   }
 
+  function handleBetChange(e: React.FormEvent<HTMLInputElement>) {
+    setBet(Number(e.currentTarget.value));
+  }
+
+  function calcCredit(bet: number, roundState: RoundState) {
+    switch (roundState) {
+      case "Win":
+        setCredit(credit + bet);
+        break;
+      case "Loose":
+        setCredit(credit - bet);
+        break;
+    }
+  }
+
   function compareCounts(playerCount: number, dealerCount: number) {
     if (dealerCount > playerCount) {
       setRoundState("Loose");
@@ -153,6 +174,10 @@ export default function useGame() {
   const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
+
+  useEffect(() => {
+    bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
+  }, [bet]);
 
   useEffect(() => {
     if (roundState === null) {
@@ -192,7 +217,12 @@ export default function useGame() {
             dealerCount: dealerCount,
           },
         ]);
+        setIsBetInputDisabled(false);
+        calcCredit(bet, roundState);
         console.log(roundHistory);
+        break;
+      case "In progress":
+        setIsBetInputDisabled(true);
         break;
     }
   }, [roundState]);
@@ -324,5 +354,10 @@ export default function useGame() {
     roundNo,
     roundHistory,
     roundState,
+    credit,
+    bet,
+    handleBetChange,
+    isBetInputDisabled,
+    isBetFaulty,
   };
 }

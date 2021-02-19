@@ -26,7 +26,6 @@ export default function Game() {
           )}
         </div>
       </div>
-
       <h4>
         {
           game.roundState === null
@@ -39,7 +38,6 @@ export default function Game() {
           : "Click New Game button to start..."} */
         }
       </h4>
-
       <div
         style={{
           height: "170px",
@@ -77,17 +75,34 @@ export default function Game() {
       </div>
       <button
         onClick={game.handleNewRound}
-        disabled={game.isRoundBtnDisabled ? true : false}
+        disabled={game.isRoundBtnDisabled || game.isBetFaulty ? true : false}
       >
         New Round
       </button>
+      <p style={{ display: game.isBetFaulty ? "block" : "none", color: "red" }}>
+        Bet must be a number between 1 and {game.credit}!
+      </p>
       <div>
-        <p>Credit: $1000</p>
-        <input></input>
-        <button>Bet</button>
+        <p>Credit: ${game.credit}</p>
+        Your bet:
+        <input
+          name="betInput"
+          type="number"
+          value={game.bet}
+          onChange={game.handleBetChange}
+          disabled={game.isBetInputDisabled}
+          //
+          placeholder={`${game.bet}`}
+          autoFocus
+        />
       </div>
-      <input></input>
-      <button onClick={game.startGame} disabled={game.isGameOn ? true : false}>
+      <div>
+        Your name:<input></input>
+      </div>
+      <button
+        onClick={game.startGame}
+        disabled={game.isGameOn || game.isBetFaulty ? true : false}
+      >
         New game
       </button>
       <div>
