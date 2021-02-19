@@ -149,7 +149,7 @@ export default function useGame() {
   function calcCredit(bet: number, roundState: RoundState) {
     switch (roundState) {
       case "Win":
-        setCredit(credit + bet);
+        setCredit(credit + 1.5 * bet);
         break;
       case "Loose":
         setCredit(credit - bet);
