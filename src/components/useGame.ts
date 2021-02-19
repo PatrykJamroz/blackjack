@@ -1,5 +1,6 @@
 import { type } from "os";
 import { useEffect, useRef, useState } from "react";
+import Game from "./Game";
 
 interface Deck {
   success: boolean;
@@ -177,9 +178,35 @@ export default function useGame() {
     }
   }
 
-  //   function creditOrPrevCredit() {
-  //       if()
-  //   }
+  const prevCreditRef = useRef<number>();
+
+  useEffect(() => {
+    prevCreditRef.current = credit;
+  });
+
+  const prevCredit = prevCreditRef.current;
+
+  const creditDisplayVal = creditDisplay(
+    credit,
+    prevCredit,
+    roundNo,
+    roundState
+  );
+
+  function creditDisplay(
+    credit: number,
+    prevCredit: any,
+    roundNo: number,
+    roundState: RoundState
+  ) {
+    if (roundNo === 5) {
+      return prevCredit;
+    } else if (roundState === "Game over") {
+      return 0;
+    } else {
+      return credit;
+    }
+  }
 
   function compareCounts(playerCount: number, dealerCount: number) {
     if (dealerCount > playerCount) {
@@ -198,13 +225,9 @@ export default function useGame() {
   const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
-  const rankSorted = rank
-    .sort((a, b) => {
-      return b.credit - a.credit;
-    })
-    .filter((data) => {
-      return data.credit !== 0;
-    });
+  const rankSorted = rank.sort((a, b) => {
+    return b.credit - a.credit;
+  });
 
   useEffect(() => {
     if (!isGameOn) {
@@ -215,14 +238,6 @@ export default function useGame() {
   useEffect(() => {
     bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
   }, [bet, credit]);
-
-  const prevCreditRef = useRef<number>();
-
-  useEffect(() => {
-    prevCreditRef.current = credit;
-  });
-
-  const prevCredit = prevCreditRef.current;
 
   useEffect(() => {
     if (roundState === null) {
@@ -245,7 +260,6 @@ export default function useGame() {
     }
 
     if (roundState !== "In progress" && roundNo === 5) {
-      setIsGameOn(false);
       setRank([
         ...rank,
         {
@@ -254,6 +268,8 @@ export default function useGame() {
           date: todayDate,
         },
       ]);
+      setIsGameOn(false);
+      console.log("rank set");
     }
   }, [roundState, roundNo]);
 
@@ -262,15 +278,6 @@ export default function useGame() {
       setIsGameOn(false);
       setRoundState("Game over");
       console.log("out of credits, game over");
-      setRank([
-        ...rank,
-        {
-          playerName: playerName,
-          credit: credit,
-          date: todayDate,
-        },
-      ]);
-      //setCredit(1000);
     }
   }, [credit]);
 
@@ -436,5 +443,6 @@ export default function useGame() {
     todayDate,
     rankSorted,
     prevCredit,
+    creditDisplayVal,
   };
 }
