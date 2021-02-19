@@ -95,6 +95,7 @@ export default function useGame() {
 
   function startGame() {
     setIsDealerTurn(false);
+    setRoundHistory([]);
     setPlayerDeck([]);
     setdealerDeck([]);
     setIsGameOn(true);
