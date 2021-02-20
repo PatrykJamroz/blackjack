@@ -64,32 +64,123 @@ const todayDate: string = new Date().toLocaleDateString("en-GB", {
 });
 
 export default function useGame() {
-  const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
-  const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
+  const [playerDeck, setPlayerDeck] = useState<Array<Card>>(
+    JSON.parse(localStorage.getItem("playerDeck") || "{}") || []
+  );
+  const [dealerDeck, setdealerDeck] = useState<Array<Card>>(
+    JSON.parse(localStorage.getItem("dealerDeck") || "{}") || []
+  );
 
-  const [isGameOn, setIsGameOn] = useState<boolean>(false);
-  const [roundNo, setRoundNo] = useState<number>(0);
-  const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>([]);
+  const [isGameOn, setIsGameOn] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isGameOn") || "{}") || false
+  );
+  const [roundNo, setRoundNo] = useState<number>(
+    JSON.parse(localStorage.getItem("roundNo") || "{}") || 0
+  );
+  const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>(
+    JSON.parse(localStorage.getItem("roundHistory") || "{}") || []
+  );
   const [rank, setRank] = useState<Array<Irank>>(
     JSON.parse(localStorage.getItem("rank") || "{}") || []
   );
 
-  const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
-  const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
+  const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(
+    JSON.parse(localStorage.getItem("cardsCountDisplayPlayer") || "{}") || 2
+  );
+  const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(
+    JSON.parse(localStorage.getItem("cardsCountDisplayDealer") || "{}") || 1
+  );
 
-  const [roundState, setRoundState] = useState<RoundState>(null);
+  const [roundState, setRoundState] = useState<RoundState>(
+    JSON.parse(localStorage.getItem("roundState") || "{}") || null
+  );
 
-  const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
-  const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(true);
-  const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(false);
-  const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(true);
-  const [isBetFaulty, setIsBetFaulty] = useState<boolean>(true);
+  const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(
+    JSON.parse(localStorage.getItem("actionBtnsDisabled") || "{}") || true
+  );
+  const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isRoundBtnDisabled") || "{}") || true
+  );
+  const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isBetInputDisabled") || "{}") || false
+  );
+  const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isDoubleBtnDisabled") || "{}") || true
+  );
+  const [isBetFaulty, setIsBetFaulty] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isBetFaulty") || "{}") || true
+  );
 
-  const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
+  const [isDealerTurn, setIsDealerTurn] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isDealerTurn") || "{}") || false
+  );
 
-  const [credit, setCredit] = useState<number>(1000);
-  const [bet, setBet] = useState<number>(200);
-  const [playerName, setPlayerName] = useState<string>("Player");
+  const [credit, setCredit] = useState<number>(
+    JSON.parse(localStorage.getItem("credit") || "{}") || 1000
+  );
+  const [bet, setBet] = useState<number>(
+    JSON.parse(localStorage.getItem("bet") || "{}") || 200
+  );
+  const [playerName, setPlayerName] = useState<string>(
+    JSON.parse(localStorage.getItem("playerName") || "{}") || "Player"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("playerDeck", JSON.stringify(playerDeck));
+    localStorage.setItem("dealerDeck", JSON.stringify(dealerDeck));
+    localStorage.setItem("roundHistory", JSON.stringify(roundHistory));
+    localStorage.setItem("roundNo", JSON.stringify(roundNo));
+    localStorage.setItem("isGameOn", JSON.stringify(isGameOn));
+    localStorage.setItem("rank", JSON.stringify(rank));
+    localStorage.setItem(
+      "cardsCountDisplayPlayer",
+      JSON.stringify(cardsCountDisplayPlayer)
+    );
+    localStorage.setItem(
+      "cardsCountDisplayDealer",
+      JSON.stringify(cardsCountDisplayDealer)
+    );
+    localStorage.setItem("roundState", JSON.stringify(roundState));
+    localStorage.setItem(
+      "actionBtnsDisabled",
+      JSON.stringify(actionBtnsDisabled)
+    );
+    localStorage.setItem(
+      "isRoundBtnDisabled",
+      JSON.stringify(isRoundBtnDisabled)
+    );
+    localStorage.setItem(
+      "isBetInputDisabled",
+      JSON.stringify(isBetInputDisabled)
+    );
+    localStorage.setItem(
+      "isDoubleBtnDisabled",
+      JSON.stringify(isDoubleBtnDisabled)
+    );
+    localStorage.setItem("isBetFaulty", JSON.stringify(isBetFaulty));
+    localStorage.setItem("isDealerTurn", JSON.stringify(isDealerTurn));
+    localStorage.setItem("credit", JSON.stringify(credit));
+    localStorage.setItem("bet", JSON.stringify(bet));
+    localStorage.setItem("playerName", JSON.stringify(playerName));
+  }, [
+    playerDeck,
+    dealerDeck,
+    roundHistory,
+    roundNo,
+    isGameOn,
+    rank,
+    cardsCountDisplayPlayer,
+    cardsCountDisplayDealer,
+    actionBtnsDisabled,
+    isRoundBtnDisabled,
+    isBetInputDisabled,
+    isDoubleBtnDisabled,
+    isBetFaulty,
+    isDealerTurn,
+    credit,
+    bet,
+    playerName,
+  ]);
 
   async function getDeck() {
     const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=6`;
@@ -474,10 +565,6 @@ export default function useGame() {
     cardsCountDisplayPlayer,
     isGameOn,
   ]);
-
-  useEffect(() => {
-    localStorage.setItem("rank", JSON.stringify(rankSorted));
-  }, [rank]);
 
   return {
     startGame,
