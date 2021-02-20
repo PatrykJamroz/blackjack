@@ -26,18 +26,7 @@ export default function Game() {
           )}
         </div>
       </div>
-      <h4>
-        {
-          game.roundState === null
-            ? "Click New Game button to start..."
-            : game.roundState === "In progress"
-            ? "Hit or Stand!"
-            : game.roundState
-          /* {game.roundState !== null
-          ? game.roundState
-          : "Click New Game button to start..."} */
-        }
-      </h4>
+      <h4>{game.gameStateText}</h4>
       <div
         style={{
           height: "170px",
