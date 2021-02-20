@@ -154,6 +154,14 @@ export default function useGame() {
     setcardsCountDisplayDealer(2);
   }
 
+  function handleDouble() {
+    setBet(bet * 2);
+    setIsDealerTurn(true);
+    setActionBtnsDisabled(true);
+    setCardsCountDisplayPlayer(3);
+    setcardsCountDisplayDealer(2);
+  }
+
   function handleNewRound() {
     setRoundState("In progress");
     setPlayerDeck([]);
@@ -465,5 +473,6 @@ export default function useGame() {
     prevCredit,
     creditDisplayVal,
     gameStateText,
+    handleDouble,
   };
 }

@@ -60,7 +60,7 @@ export default function Game() {
         >
           Stand
         </button>
-        <button>Double</button>
+        <button onClick={game.handleDouble}>Double</button>
       </div>
       <button
         onClick={game.handleNewRound}
