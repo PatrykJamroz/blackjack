@@ -70,7 +70,9 @@ export default function useGame() {
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [roundNo, setRoundNo] = useState<number>(0);
   const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>([]);
-  const [rank, setRank] = useState<Array<Irank>>([]);
+  const [rank, setRank] = useState<Array<Irank>>(
+    JSON.parse(localStorage.getItem("rank") || "{}") || []
+  );
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
@@ -472,6 +474,10 @@ export default function useGame() {
     cardsCountDisplayPlayer,
     isGameOn,
   ]);
+
+  useEffect(() => {
+    localStorage.setItem("rank", JSON.stringify(rankSorted));
+  }, [rank]);
 
   return {
     startGame,
