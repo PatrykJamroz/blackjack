@@ -1,6 +1,4 @@
-import { type } from "os";
 import { useEffect, useRef, useState } from "react";
-import Game from "./Game";
 
 interface Deck {
   success: boolean;
@@ -78,7 +76,6 @@ export default function useGame() {
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
 
   const [roundState, setRoundState] = useState<RoundState>(null);
-  //const [roundLoose, setRoundLoose] = useState<boolean>(false);
 
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(true);
@@ -90,8 +87,6 @@ export default function useGame() {
   const [credit, setCredit] = useState<number>(1000);
   const [bet, setBet] = useState<number>(200);
   const [playerName, setPlayerName] = useState<string>("Player");
-
-  // let roundHistory = [{}];
 
   async function getDeck() {
     const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=6`;
@@ -222,6 +217,26 @@ export default function useGame() {
     }
   }
 
+  const gameStateText = setGameStateText(roundState, isGameOn);
+
+  function setGameStateText(roundState: RoundState, isGameOn: boolean) {
+    if (!isGameOn && roundState !== null) {
+      return "End of the game! Set bet and click new game to start over...";
+    } else if (roundState === "Win") {
+      return "Round won! Click new round...";
+    } else if (roundState === "Loose") {
+      return "Round lost! Click new round...";
+    } else if (roundState === "Draw") {
+      return "It's a draw! Click new round...";
+    } else if (roundState === "Game over") {
+      return "Game over! You are broke, hit new game to start over...";
+    } else if (roundState === null) {
+      return "Set bet, your name and click new game to start...";
+    } else {
+      return "Hit, stand or double!";
+    }
+  }
+
   function compareCounts(playerCount: number, dealerCount: number) {
     if (dealerCount > playerCount) {
       setRoundState("Loose");
@@ -247,7 +262,7 @@ export default function useGame() {
     if (!isGameOn) {
       setCredit(1000);
     }
-  }, [isGameOn]); /////////////////
+  }, [isGameOn]);
 
   useEffect(() => {
     bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
@@ -270,18 +285,9 @@ export default function useGame() {
   useEffect(() => {
     if (roundState !== "In progress") {
       setActionBtnsDisabled(true);
-      //console.log("set buttons disabled");
     }
 
     if (roundState !== "In progress" && roundNo === 5) {
-      //   setRank([
-      //     ...rank,
-      //     {
-      //       playerName: playerName,
-      //       credit: credit,
-      //       date: todayDate,
-      //     },
-      //   ]);
       setIsGameOn(false);
       console.log("rank set");
     }
@@ -458,5 +464,6 @@ export default function useGame() {
     rankSorted,
     prevCredit,
     creditDisplayVal,
+    gameStateText,
   };
 }
