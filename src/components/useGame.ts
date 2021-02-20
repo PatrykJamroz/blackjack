@@ -80,6 +80,7 @@ export default function useGame() {
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(true);
   const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(false);
+  const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(true);
   const [isBetFaulty, setIsBetFaulty] = useState<boolean>(true);
 
   const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
@@ -228,7 +229,9 @@ export default function useGame() {
   const gameStateText = setGameStateText(roundState, isGameOn);
 
   function setGameStateText(roundState: RoundState, isGameOn: boolean) {
-    if (!isGameOn && roundState !== null) {
+    if (roundState === "Game over") {
+      return "Game over! You are broke, hit new game to start over...";
+    } else if (credit > 0 && roundNo !== 0 && !isGameOn) {
       return "End of the game! Set bet and click new game to start over...";
     } else if (roundState === "Win") {
       return "Round won! Click new round...";
@@ -236,8 +239,6 @@ export default function useGame() {
       return "Round lost! Click new round...";
     } else if (roundState === "Draw") {
       return "It's a draw! Click new round...";
-    } else if (roundState === "Game over") {
-      return "Game over! You are broke, hit new game to start over...";
     } else if (roundState === null) {
       return "Set bet, your name and click new game to start...";
     } else {
@@ -300,6 +301,18 @@ export default function useGame() {
       console.log("rank set");
     }
   }, [roundState, roundNo]);
+
+  useEffect(() => {
+    if (roundState === null) {
+      setIsDoubleBtnDisabled(true);
+    } else if (2 * bet > credit) {
+      setIsDoubleBtnDisabled(true);
+    } else if (actionBtnsDisabled) {
+      setIsDoubleBtnDisabled(true);
+    } else if (!actionBtnsDisabled && 2 * bet <= credit) {
+      setIsDoubleBtnDisabled(false);
+    }
+  }, [roundState, bet, credit, actionBtnsDisabled]);
 
   useEffect(() => {
     if (credit === 0) {
@@ -474,5 +487,6 @@ export default function useGame() {
     creditDisplayVal,
     gameStateText,
     handleDouble,
+    isDoubleBtnDisabled,
   };
 }
