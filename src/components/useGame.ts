@@ -80,6 +80,7 @@ export default function useGame() {
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(true);
   const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(true);
   const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(false);
+  const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(true);
   const [isBetFaulty, setIsBetFaulty] = useState<boolean>(true);
 
   const [isDealerTurn, setIsDealerTurn] = useState<boolean>(false);
@@ -154,6 +155,14 @@ export default function useGame() {
     setcardsCountDisplayDealer(2);
   }
 
+  function handleDouble() {
+    setBet(bet * 2);
+    setIsDealerTurn(true);
+    setActionBtnsDisabled(true);
+    setCardsCountDisplayPlayer(3);
+    setcardsCountDisplayDealer(2);
+  }
+
   function handleNewRound() {
     setRoundState("In progress");
     setPlayerDeck([]);
@@ -220,20 +229,33 @@ export default function useGame() {
   const gameStateText = setGameStateText(roundState, isGameOn);
 
   function setGameStateText(roundState: RoundState, isGameOn: boolean) {
-    if (!isGameOn && roundState !== null) {
-      return "End of the game! Set bet and click new game to start over...";
-    } else if (roundState === "Win") {
-      return "Round won! Click new round...";
-    } else if (roundState === "Loose") {
-      return "Round lost! Click new round...";
-    } else if (roundState === "Draw") {
-      return "It's a draw! Click new round...";
-    } else if (roundState === "Game over") {
+    if (roundState === "Game over") {
       return "Game over! You are broke, hit new game to start over...";
+    } else if (credit > 0 && roundNo !== 0 && !isGameOn) {
+      return "End of the game! Set bet and click new game to start over...";
+    } else if (
+      roundState === "Win" ||
+      roundState === "Loose" ||
+      roundState === "Draw"
+    ) {
+      return "Click new round...";
     } else if (roundState === null) {
       return "Set bet, your name and click new game to start...";
     } else {
       return "Hit, stand or double!";
+    }
+  }
+
+  const roundResult = setGameRoundResult(roundState);
+
+  function setGameRoundResult(roundState: RoundState) {
+    switch (roundState) {
+      case "Win":
+        return "Round won!";
+      case "Loose":
+        return "Round lost!";
+      case "Draw":
+        return "It's a draw!";
     }
   }
 
@@ -292,6 +314,18 @@ export default function useGame() {
       console.log("rank set");
     }
   }, [roundState, roundNo]);
+
+  useEffect(() => {
+    if (roundState === null) {
+      setIsDoubleBtnDisabled(true);
+    } else if (2 * bet > credit) {
+      setIsDoubleBtnDisabled(true);
+    } else if (actionBtnsDisabled) {
+      setIsDoubleBtnDisabled(true);
+    } else if (!actionBtnsDisabled && 2 * bet <= credit) {
+      setIsDoubleBtnDisabled(false);
+    }
+  }, [roundState, bet, credit, actionBtnsDisabled]);
 
   useEffect(() => {
     if (credit === 0) {
@@ -465,5 +499,8 @@ export default function useGame() {
     prevCredit,
     creditDisplayVal,
     gameStateText,
+    handleDouble,
+    isDoubleBtnDisabled,
+    roundResult,
   };
 }
