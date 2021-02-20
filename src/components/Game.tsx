@@ -26,6 +26,7 @@ export default function Game() {
           )}
         </div>
       </div>
+      <h4>{game.roundResult}</h4>
       <h4>{game.gameStateText}</h4>
       <div
         style={{

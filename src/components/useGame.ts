@@ -233,16 +233,29 @@ export default function useGame() {
       return "Game over! You are broke, hit new game to start over...";
     } else if (credit > 0 && roundNo !== 0 && !isGameOn) {
       return "End of the game! Set bet and click new game to start over...";
-    } else if (roundState === "Win") {
-      return "Round won! Click new round...";
-    } else if (roundState === "Loose") {
-      return "Round lost! Click new round...";
-    } else if (roundState === "Draw") {
-      return "It's a draw! Click new round...";
+    } else if (
+      roundState === "Win" ||
+      roundState === "Loose" ||
+      roundState === "Draw"
+    ) {
+      return "Click new round...";
     } else if (roundState === null) {
       return "Set bet, your name and click new game to start...";
     } else {
       return "Hit, stand or double!";
+    }
+  }
+
+  const roundResult = setGameRoundResult(roundState);
+
+  function setGameRoundResult(roundState: RoundState) {
+    switch (roundState) {
+      case "Win":
+        return "Round won!";
+      case "Loose":
+        return "Round lost!";
+      case "Draw":
+        return "It's a draw!";
     }
   }
 
@@ -488,5 +501,6 @@ export default function useGame() {
     gameStateText,
     handleDouble,
     isDoubleBtnDisabled,
+    roundResult,
   };
 }
