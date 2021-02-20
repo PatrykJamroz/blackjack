@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactComponentElement, useEffect, useRef, useState } from "react";
 
 interface Deck {
   success: boolean;
