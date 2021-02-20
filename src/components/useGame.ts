@@ -246,9 +246,9 @@ export default function useGame() {
     }
   }
 
-  const roundResult = setGameRoundResult(roundState);
+  const roundResult = setRoundResult(roundState);
 
-  function setGameRoundResult(roundState: RoundState) {
+  function setRoundResult(roundState: RoundState) {
     switch (roundState) {
       case "Win":
         return "Round won!";
@@ -256,6 +256,10 @@ export default function useGame() {
         return "Round lost!";
       case "Draw":
         return "It's a draw!";
+      case null:
+        return "Game not started.";
+      default:
+        return "Round in progress...";
     }
   }
 
