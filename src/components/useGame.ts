@@ -1,5 +1,9 @@
 import { ReactComponentElement, useEffect, useRef, useState } from "react";
 
+window.onbeforeunload = function () {
+  return "Do you really want to close?";
+};
+
 interface Deck {
   success: boolean;
   deck_id: string;
