@@ -83,7 +83,7 @@ export default function Game() {
         Bet must be a number between 1 and {game.credit}!
       </p>
       <div>
-        <p>Credit: ${game.credit}</p>
+        <p>Credit: ${game.creditDisplayVal}</p>
         Your bet:
         <input
           name="betInput"
@@ -91,13 +91,19 @@ export default function Game() {
           value={game.bet}
           onChange={game.handleBetChange}
           disabled={game.isBetInputDisabled}
-          //
-          placeholder={`${game.bet}`}
           autoFocus
         />
       </div>
       <div>
-        Your name:<input></input>
+        Your name:
+        <input
+          name="playerInput"
+          type="text"
+          value={game.playerName}
+          onChange={game.handlePlayerNameChange}
+          disabled={game.isGameOn}
+          autoFocus
+        />
       </div>
       <button
         onClick={game.startGame}
@@ -106,6 +112,20 @@ export default function Game() {
         New game
       </button>
       <div>
+        <div>
+          <p>Rank</p>
+          <ol>
+            {game.rankSorted.map((obj, index) => {
+              return (
+                <div key={index}>
+                  <li>
+                    {obj.playerName} - ${obj.credit} - {obj.date}
+                  </li>
+                </div>
+              );
+            })}
+          </ol>
+        </div>
         <div>Round History</div>
         <div>
           {game.roundHistory.map((obj, index) => {

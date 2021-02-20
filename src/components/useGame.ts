@@ -1,5 +1,6 @@
 import { type } from "os";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Game from "./Game";
 
 interface Deck {
   success: boolean;
@@ -50,6 +51,20 @@ interface IroundHistory {
   dealerCount: number;
 }
 
+interface Irank {
+  playerName: string;
+  credit: number;
+  date: string;
+}
+
+const todayDate: string = new Date().toLocaleDateString("en-GB", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 export default function useGame() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>([]);
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>([]);
@@ -57,6 +72,7 @@ export default function useGame() {
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [roundNo, setRoundNo] = useState<number>(0);
   const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>([]);
+  const [rank, setRank] = useState<Array<Irank>>([]);
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(2);
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(1);
@@ -73,6 +89,7 @@ export default function useGame() {
 
   const [credit, setCredit] = useState<number>(1000);
   const [bet, setBet] = useState<number>(200);
+  const [playerName, setPlayerName] = useState<string>("Player");
 
   // let roundHistory = [{}];
 
@@ -98,7 +115,21 @@ export default function useGame() {
     setdealerDeck(dDeck);
   }
 
+  function shouldSetRank(roundState: RoundState, rank: any) {
+    if (roundState !== null && roundNo === 5) {
+      setRank([
+        ...rank,
+        {
+          playerName: playerName,
+          credit: prevCredit,
+          date: todayDate,
+        },
+      ]);
+    }
+  }
+
   function startGame() {
+    shouldSetRank(roundState, rank);
     setIsGameOn(true);
     setIsDealerTurn(false);
     setCredit(1000);
@@ -146,6 +177,10 @@ export default function useGame() {
     setBet(Number(e.currentTarget.value));
   }
 
+  function handlePlayerNameChange(e: React.FormEvent<HTMLInputElement>) {
+    setPlayerName(e.currentTarget.value);
+  }
+
   function calcCredit(bet: number, roundState: RoundState) {
     switch (roundState) {
       case "Win":
@@ -154,6 +189,36 @@ export default function useGame() {
       case "Loose":
         setCredit(credit - bet);
         break;
+    }
+  }
+
+  const prevCreditRef = useRef<number>();
+
+  useEffect(() => {
+    prevCreditRef.current = credit;
+  });
+
+  const prevCredit = prevCreditRef.current;
+
+  const creditDisplayVal = creditDisplay(
+    credit,
+    prevCredit,
+    roundNo,
+    roundState
+  );
+
+  function creditDisplay(
+    credit: number,
+    prevCredit: any,
+    roundNo: number,
+    roundState: RoundState
+  ) {
+    if (roundNo === 5) {
+      return prevCredit;
+    } else if (roundState === "Game over") {
+      return 0;
+    } else {
+      return credit;
     }
   }
 
@@ -174,6 +239,15 @@ export default function useGame() {
   const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
+  const rankSorted = rank.sort((a, b) => {
+    return b.credit - a.credit;
+  });
+
+  useEffect(() => {
+    if (!isGameOn) {
+      setCredit(1000);
+    }
+  }, [isGameOn]); /////////////////
 
   useEffect(() => {
     bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
@@ -200,7 +274,16 @@ export default function useGame() {
     }
 
     if (roundState !== "In progress" && roundNo === 5) {
+      //   setRank([
+      //     ...rank,
+      //     {
+      //       playerName: playerName,
+      //       credit: credit,
+      //       date: todayDate,
+      //     },
+      //   ]);
       setIsGameOn(false);
+      console.log("rank set");
     }
   }, [roundState, roundNo]);
 
@@ -209,7 +292,6 @@ export default function useGame() {
       setIsGameOn(false);
       setRoundState("Game over");
       console.log("out of credits, game over");
-      setCredit(1000);
     }
   }, [credit]);
 
@@ -370,5 +452,11 @@ export default function useGame() {
     handleBetChange,
     isBetInputDisabled,
     isBetFaulty,
+    playerName,
+    handlePlayerNameChange,
+    todayDate,
+    rankSorted,
+    prevCredit,
+    creditDisplayVal,
   };
 }
