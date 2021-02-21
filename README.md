@@ -39,7 +39,7 @@ Project is created with:
 
 # Getting Started with BlackJack Game App
 
-## `npm install`
+### `npm install`
 
 Installs all required dependencies.
 
