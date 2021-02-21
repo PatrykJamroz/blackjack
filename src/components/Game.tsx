@@ -23,6 +23,7 @@ import {
   RankContainer,
   RankRecordLiTag,
   FaultyBetPTag,
+  RoundHistoryRecord,
 } from "./StyledComponent";
 
 export default function Game() {
@@ -133,7 +134,7 @@ export default function Game() {
           <div>
             {game.roundHistory.map((obj, index) => {
               return (
-                <div key={index}>
+                <RoundHistoryRecord key={index}>
                   <RoundHistoryRecordPtag>
                     Round: {obj.round}
                   </RoundHistoryRecordPtag>
@@ -156,8 +157,7 @@ export default function Game() {
                       return <span key={index}>{array.code} </span>;
                     })}
                   </RoundHistoryRecordPtag>
-                  <hr />
-                </div>
+                </RoundHistoryRecord>
               );
             })}
           </div>

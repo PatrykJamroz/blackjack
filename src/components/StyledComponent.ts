@@ -138,6 +138,10 @@ const RoundHistoryRecordPtag = styled.p`
   margin: 0;
 `;
 
+const RoundHistoryRecord = styled.div`
+  border-bottom: dashed 0.5px whitesmoke;
+`;
+
 const RankContainer = styled.div`
   background-color: #48D1CC;
   border-radius: 0.5rem;
@@ -185,4 +189,5 @@ export {
   TitlePTag,
   RankRecordLiTag,
   FaultyBetPTag,
+  RoundHistoryRecord,
 };
