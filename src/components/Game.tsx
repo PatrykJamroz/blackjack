@@ -1,108 +1,129 @@
-import react from "react";
 import useGame from "./useGame";
-import Card from "./Card";
+// import Card from "./Card";
+import {
+  GameContainer,
+  TopPanel,
+  BotPanel,
+  Table,
+  Card,
+  Deck,
+  GameStatus,
+  GameStatusPtag,
+  CardDummy,
+  ControlsContainer,
+  Button,
+  BetContainer,
+  Input,
+  BetInput,
+} from "./StyledComponent";
 
 export default function Game() {
   const game = useGame();
 
   return (
     <div>
-      <div
+      <GameContainer>
+        <TopPanel>Dealer hand: {game.dealerCount}</TopPanel>
+        <Table>
+          <Deck>
+            {game.roundState === null ? (
+              <CardDummy src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg" />
+            ) : (
+              game.dealerHand.map((card, index) => (
+                <Card src={card.image} key={index} />
+              ))
+            )}
+          </Deck>
+          <GameStatus>
+            <GameStatusPtag>{game.roundResult}</GameStatusPtag>
+            <GameStatusPtag>{game.gameStateText}</GameStatusPtag>
+          </GameStatus>
+          <Deck>
+            {game.roundState === null ? (
+              <CardDummy src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg" />
+            ) : (
+              game.playerHand.map((card, index) => (
+                <Card src={card.image} key={index} />
+              ))
+            )}
+          </Deck>
+        </Table>
+        <BotPanel>
+          <p style={{ margin: "0" }}>Player hand: {game.playerCount}</p>
+          <p style={{ margin: "0" }}>Round: {game.roundNo}/5</p>
+          <p style={{ margin: "0" }}>Credit: ${game.creditDisplayVal}</p>
+        </BotPanel>
+        <ControlsContainer>
+          <Button
+            onClick={game.handleHit}
+            disabled={game.actionBtnsDisabled ? true : false}
+          >
+            Hit
+          </Button>
+          <Button
+            onClick={game.handleStand}
+            disabled={game.actionBtnsDisabled ? true : false}
+          >
+            Stand
+          </Button>
+          <Button
+            onClick={game.handleDouble}
+            disabled={game.isDoubleBtnDisabled}
+          >
+            Double
+          </Button>
+        </ControlsContainer>
+        <ControlsContainer>
+          <Button
+            onClick={game.handleNewRound}
+            disabled={
+              game.isRoundBtnDisabled || game.isBetFaulty ? true : false
+            }
+            style={{ backgroundColor: "orange" }}
+          >
+            New Round
+          </Button>
+          <BetContainer>
+            Your bet:
+            <Input
+              name="betInput"
+              type="number"
+              value={game.bet}
+              onChange={game.handleBetChange}
+              disabled={game.isBetInputDisabled}
+              autoFocus
+            />
+          </BetContainer>
+        </ControlsContainer>
+        <ControlsContainer>
+          <Button
+            onClick={game.startGame}
+            disabled={/*game.isGameOn ||*/ game.isBetFaulty ? true : false}
+            style={{ backgroundColor: "#5F9EA0" }}
+          >
+            New game
+          </Button>
+          <BetInput
+            name="playerInput"
+            type="text"
+            value={game.playerName}
+            onChange={game.handlePlayerNameChange}
+            disabled={game.isGameOn}
+          />
+        </ControlsContainer>
+      </GameContainer>
+      <p
         style={{
-          height: "165px",
+          display: game.isBetFaulty ? "block" : "none",
+          color: "red",
         }}
       >
-        Dealer hand: {game.dealerCount}
-        <div style={{ display: "flex" }}>
-          {game.roundState === null ? (
-            <img
-              src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg"
-              style={{ height: "150px" }}
-            />
-          ) : (
-            game.dealerHand.map((card, index) => (
-              <Card image={card.image} key={index} />
-            ))
-          )}
-        </div>
-      </div>
-      <h4>{game.roundResult}</h4>
-      <h4>{game.gameStateText}</h4>
-      <div
-        style={{
-          height: "170px",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          {game.roundState === null ? (
-            <img
-              src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg"
-              style={{ height: "150px" }}
-            />
-          ) : (
-            game.playerHand.map((card, index) => (
-              <Card image={card.image} key={index} />
-            ))
-          )}
-        </div>
-        Player hand: {game.playerCount}
-      </div>
-      <div>Round: {game.roundNo}</div>
-      <div>
-        <button
-          onClick={game.handleHit}
-          disabled={game.actionBtnsDisabled ? true : false}
-        >
-          Hit
-        </button>
-        <button
-          onClick={game.handleStand}
-          disabled={game.actionBtnsDisabled ? true : false}
-        >
-          Stand
-        </button>
-        <button onClick={game.handleDouble} disabled={game.isDoubleBtnDisabled}>
-          Double
-        </button>
-      </div>
-      <button
-        onClick={game.handleNewRound}
-        disabled={game.isRoundBtnDisabled || game.isBetFaulty ? true : false}
-      >
-        New Round
-      </button>
-      <p style={{ display: game.isBetFaulty ? "block" : "none", color: "red" }}>
         Bet must be a number between 1 and {game.credit}!
       </p>
-      <div>
-        <p>Credit: ${game.creditDisplayVal}</p>
-        Your bet:
-        <input
-          name="betInput"
-          type="number"
-          value={game.bet}
-          onChange={game.handleBetChange}
-          disabled={game.isBetInputDisabled}
-          autoFocus
-        />
-      </div>
-      <div>
-        Your name:
-        <input
-          name="playerInput"
-          type="text"
-          value={game.playerName}
-          onChange={game.handlePlayerNameChange}
-          disabled={game.isGameOn}
-          autoFocus
-        />
-      </div>
-      <button
-        onClick={game.startGame}
-        disabled={/*game.isGameOn ||*/ game.isBetFaulty ? true : false}
-      >
-        New game
-      </button>
+      <div></div>
+
+      <div></div>
+
       <div>
         <div>
           <p>Rank</p>
