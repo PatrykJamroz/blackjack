@@ -149,6 +149,8 @@ const RoundHistoryRecordPtag = styled.p`
 
 const RoundHistoryRecord = styled.div`
   border-bottom: dashed 0.5px whitesmoke;
+  margin-top: 5px;
+  padding-bottom: 5px;
   @media (min-width: 449px) {
     width: 100px;
   }
