@@ -36,7 +36,7 @@ const BotPanel = styled(TopPanel)`
 `;
 
 const Table = styled.div`
-  background-color: #2e8b57;
+  background-color: #007553;
   padding: 5px 0;
 `;
 
