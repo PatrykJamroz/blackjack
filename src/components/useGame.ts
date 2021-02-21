@@ -69,64 +69,64 @@ const todayDate: string = new Date().toLocaleDateString("en-GB", {
 
 export default function useGame() {
   const [playerDeck, setPlayerDeck] = useState<Array<Card>>(
-    JSON.parse(localStorage.getItem("playerDeck") || "{}") || []
+    JSON.parse(localStorage.getItem("playerDeck") || "[]")
   );
   const [dealerDeck, setdealerDeck] = useState<Array<Card>>(
-    JSON.parse(localStorage.getItem("dealerDeck") || "{}") || []
+    JSON.parse(localStorage.getItem("dealerDeck") || "[]")
   );
 
   const [isGameOn, setIsGameOn] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isGameOn") || "{}") || false
+    JSON.parse(localStorage.getItem("isGameOn") || "false")
   );
   const [roundNo, setRoundNo] = useState<number>(
-    JSON.parse(localStorage.getItem("roundNo") || "{}") || 0
+    JSON.parse(localStorage.getItem("roundNo") || "0")
   );
   const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>(
-    JSON.parse(localStorage.getItem("roundHistory") || "{}") || []
+    JSON.parse(localStorage.getItem("roundHistory") || "[]")
   );
   const [rank, setRank] = useState<Array<Irank>>(
-    JSON.parse(localStorage.getItem("rank") || "{}") || []
+    JSON.parse(localStorage.getItem("rank") || "[]")
   );
 
   const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(
-    JSON.parse(localStorage.getItem("cardsCountDisplayPlayer") || "{}") || 2
+    JSON.parse(localStorage.getItem("cardsCountDisplayPlayer") || "2")
   );
   const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(
-    JSON.parse(localStorage.getItem("cardsCountDisplayDealer") || "{}") || 1
+    JSON.parse(localStorage.getItem("cardsCountDisplayDealer") || "1")
   );
 
   const [roundState, setRoundState] = useState<RoundState>(
-    JSON.parse(localStorage.getItem("roundState") || "{}") || null
+    JSON.parse(localStorage.getItem("roundState") || "null")
   );
 
   const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("actionBtnsDisabled") || "{}") || true
+    JSON.parse(localStorage.getItem("actionBtnsDisabled") || "true")
   );
   const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isRoundBtnDisabled") || "{}") || true
+    JSON.parse(localStorage.getItem("isRoundBtnDisabled") || "true")
   );
   const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isBetInputDisabled") || "{}") || false
+    JSON.parse(localStorage.getItem("isBetInputDisabled") || "false")
   );
   const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isDoubleBtnDisabled") || "{}") || true
+    JSON.parse(localStorage.getItem("isDoubleBtnDisabled") || "true")
   );
   const [isBetFaulty, setIsBetFaulty] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isBetFaulty") || "{}") || true
+    JSON.parse(localStorage.getItem("isBetFaulty") || "true")
   );
 
   const [isDealerTurn, setIsDealerTurn] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isDealerTurn") || "{}") || false
+    JSON.parse(localStorage.getItem("isDealerTurn") || "false")
   );
 
   const [credit, setCredit] = useState<number>(
-    JSON.parse(localStorage.getItem("credit") || "{}") || 1000
+    JSON.parse(localStorage.getItem("credit") || "1000")
   );
   const [bet, setBet] = useState<number>(
-    JSON.parse(localStorage.getItem("bet") || "{}") || 200
+    JSON.parse(localStorage.getItem("bet") || "200")
   );
   const [playerName, setPlayerName] = useState<string>(
-    JSON.parse(localStorage.getItem("playerName") || "{}") || "Player"
+    JSON.parse(localStorage.getItem("playerName") || '"Player Name"')
   );
 
   useEffect(() => {
@@ -436,7 +436,12 @@ export default function useGame() {
     }
   }, [credit]);
 
+  const isInitial = useRef(true);
   useEffect(() => {
+    if (isInitial.current) {
+      isInitial.current = false;
+      return;
+    }
     switch (roundState) {
       case "Win":
       case "Loose":
