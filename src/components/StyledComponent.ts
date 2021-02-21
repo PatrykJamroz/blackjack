@@ -2,22 +2,18 @@ import styled from "styled-components";
 
 const GameContainer = styled.div`
   margin: 0 auto;
-  max-width: 450px;
 `;
 
 const Wrapper = styled.div`
-  max-width: 450px;
+  width: 300.5px;
   margin: 0 auto;
-  @media (min-width: 450px) {
-    margin: 0 auto;
+  @media (min-width: 449px) {
     display: flex;
   }
 `;
 
 const Container = styled.div`
-  width: 300.5px;
-  margin: 0 auto;
-  margin-right: 5px;
+  width: 100%;
 `;
 
 const TopPanel = styled.div`
@@ -38,6 +34,7 @@ const BotPanel = styled(TopPanel)`
 const Table = styled.div`
   background-color: #007553;
   padding: 5px 0;
+  width: 300.5px;
 `;
 
 const Card = styled.img`
@@ -127,9 +124,13 @@ const PlayerInput = styled.input`
 const RoundHistoryContainer = styled.div`
   background-color: #dda0dd;
   border-radius: 0.5rem;
-  width: 135px;
+  width: 290.5;
   padding: 0 5px;
+  margin-top: 5px;
   border: solid 0.5px gray;
+  @media (min-width: 449px) {
+    margin: 0 0 0 5px;
+  }
 `;
 
 const TitlePTag = styled.p`
@@ -137,7 +138,7 @@ const TitlePTag = styled.p`
   font-weight: 800;
   font-family: Arial;
   text-align: center;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.25rem 0;
 `;
 
 const RoundHistoryRecordPtag = styled.p`
@@ -148,18 +149,21 @@ const RoundHistoryRecordPtag = styled.p`
 
 const RoundHistoryRecord = styled.div`
   border-bottom: dashed 0.5px whitesmoke;
+  @media (min-width: 449px) {
+    width: 100px;
+  }
 `;
 
 const RankContainer = styled.div`
-  background-color: #48D1CC;
+  background-color: #48d1cc;
   border-radius: 0.5rem;
   padding: 0 5px;
-  max-440px;
-  margin-top: 5px;
+  width: 290.5px;
+  margin: 5px auto 0 auto;
 `;
 
 const RankRecordLiTag = styled.li`
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-family: Arial;
   justify-content: center;
 `;

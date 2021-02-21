@@ -21,6 +21,7 @@ It's player vs automated dealer BlackJack game with following assumptions:
 - hands from every round are displayed on "Round History" during the game
 - the game can be reset at any time
 - the game is stored locally and can be loaded or reoladed at any time - including browser restart.
+- responsiveness
 
 ## Technologies
 

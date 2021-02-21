@@ -166,7 +166,7 @@ export default function Game() {
       </Wrapper>
       <RankContainer>
         <TitlePTag>Ranking</TitlePTag>
-        <ol>
+        <ol style={{ margin: 0 }}>
           {game.rankSorted.map((obj, index) => {
             return (
               <div key={index}>
