@@ -13,10 +13,10 @@ It's player vs automated dealer BlackJack game with following assumptions:
 
 - game utilizes BlackJack rules
 - starting credit $1000
-- use of [Deck Of Cards API](https://deckofcardsapi.com/) with 6-decks, cards are shuffled before each game
+- use of [Deck Of Cards API](https://deckofcardsapi.com/) with 6-decks, cards are shuffled before each round
 - each game consists of 5 rounds after which game ends and final credit is added to ranking
 - player places bet before each round starts
-- possible actions during each round are: hit, bed, double
+- possible actions during each round are: hit, bet, double
 - wins are 1.5 x Bet, loose means the bet is gone
 - hands from every round are displayed on "Round History" during the game
 - the game can be reset at any time
