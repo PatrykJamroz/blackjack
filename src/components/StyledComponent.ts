@@ -98,6 +98,14 @@ const Button = styled.button`
   padding: 0.25rem 0;
 `;
 
+const BtnNewGame = styled(Button)`
+  background-color: #dda0dd;
+`;
+
+const BtnNewRound = styled(Button)`
+  background-color: #ffc0cb;
+`;
+
 const Input = styled.input`
   width: 40%;
   margin: 0 0 0 1rem;
@@ -179,6 +187,8 @@ export {
   BotPanel,
   ControlsContainer,
   Button,
+  BtnNewGame,
+  BtnNewRound,
   BetContainer,
   Input,
   PlayerInput,

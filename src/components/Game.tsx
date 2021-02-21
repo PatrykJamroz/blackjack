@@ -1,5 +1,4 @@
 import useGame from "./useGame";
-// import Card from "./Card";
 import {
   GameContainer,
   Container,
@@ -24,7 +23,12 @@ import {
   RankRecordLiTag,
   FaultyBetPTag,
   RoundHistoryRecord,
+  BtnNewGame,
+  BtnNewRound,
 } from "./StyledComponent";
+
+const unknownCardURL =
+  "https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg";
 
 export default function Game() {
   const game = useGame();
@@ -37,7 +41,7 @@ export default function Game() {
           <Table>
             <Deck>
               {game.roundState === null ? (
-                <CardDummy src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg" />
+                <CardDummy src={unknownCardURL} />
               ) : (
                 game.dealerHand.map((card, index) => (
                   <Card src={card.image} key={index} />
@@ -50,7 +54,7 @@ export default function Game() {
             </GameStatus>
             <Deck>
               {game.roundState === null ? (
-                <CardDummy src="https://www.researchgate.net/profile/Francisco_Perales2/publication/334204491/figure/fig1/AS:776599045697537@1562167049292/Question-card-Symbol-question-mark-example-card.jpg" />
+                <CardDummy src={unknownCardURL} />
               ) : (
                 game.playerHand.map((card, index) => (
                   <Card src={card.image} key={index} />
@@ -84,15 +88,14 @@ export default function Game() {
             </Button>
           </ControlsContainer>
           <ControlsContainer>
-            <Button
+            <BtnNewRound
               onClick={game.handleNewRound}
               disabled={
                 game.isRoundBtnDisabled || game.isBetFaulty ? true : false
               }
-              style={{ backgroundColor: "#FFC0CB" }}
             >
               New round
-            </Button>
+            </BtnNewRound>
             <BetContainer>
               Your bet:
               <Input
@@ -106,19 +109,17 @@ export default function Game() {
             </BetContainer>
           </ControlsContainer>
           <ControlsContainer>
-            <Button
+            <BtnNewGame
               onClick={game.startGame}
-              disabled={/*game.isGameOn ||*/ game.isBetFaulty ? true : false}
-              style={{ backgroundColor: "#DDA0DD" }}
+              disabled={game.isBetFaulty ? true : false}
             >
               New game
-            </Button>
+            </BtnNewGame>
             <PlayerInput
               name="playerInput"
               type="text"
               value={game.playerName}
               onChange={game.handlePlayerNameChange}
-              //disabled={game.isGameOn}
             />
           </ControlsContainer>
           <FaultyBetPTag
@@ -164,7 +165,7 @@ export default function Game() {
         </RoundHistoryContainer>
       </Wrapper>
       <RankContainer>
-        <TitlePTag>Rank</TitlePTag>
+        <TitlePTag>Ranking</TitlePTag>
         <ol>
           {game.rankSorted.map((obj, index) => {
             return (
