@@ -88,7 +88,7 @@ export default function Game() {
               disabled={
                 game.isRoundBtnDisabled || game.isBetFaulty ? true : false
               }
-              style={{ backgroundColor: "#CD5C5C" }}
+              style={{ backgroundColor: "#FFC0CB" }}
             >
               New round
             </Button>
@@ -108,7 +108,7 @@ export default function Game() {
             <Button
               onClick={game.startGame}
               disabled={/*game.isGameOn ||*/ game.isBetFaulty ? true : false}
-              style={{ backgroundColor: "#5F9EA0" }}
+              style={{ backgroundColor: "#DDA0DD" }}
             >
               New game
             </Button>

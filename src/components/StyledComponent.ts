@@ -2,15 +2,15 @@ import styled from "styled-components";
 
 const GameContainer = styled.div`
   margin: 0 auto;
-
   max-width: 450px;
 `;
 
 const Wrapper = styled.div`
-  display: flex;
   max-width: 450px;
-  @media (max-width: 500px) {
+  margin: 0 auto;
+  @media (min-width: 450px) {
     margin: 0 auto;
+    display: flex;
   }
 `;
 
@@ -21,7 +21,7 @@ const Container = styled.div`
 `;
 
 const TopPanel = styled.div`
-  background-color: #dc143c;
+  background-color: #800000;
   border-radius: 0.5rem 0.5rem 0 0;
   font-size: 1rem;
   color: white;
@@ -36,7 +36,7 @@ const BotPanel = styled(TopPanel)`
 `;
 
 const Table = styled.div`
-  background-color: #556b2f;
+  background-color: #2e8b57;
   padding: 5px 0;
 `;
 
@@ -76,7 +76,7 @@ const ControlsContainer = styled.div`
 
 const BetContainer = styled.div`
   width: 66%;
-  background-color: #fff0f5;
+  background-color: #ffff00;
   padding: 0;
   font-size: 1rem;
   font-family: Arial;
@@ -107,7 +107,7 @@ const Input = styled.input`
 
 const PlayerInput = styled.input`
   width: 66%;
-  background-color: #fff0f5;
+  background-color: #ffff00;
   border-radius: 0.5rem;
   border: solid 0.5px gray;
   font-size: 1rem;
@@ -117,7 +117,7 @@ const PlayerInput = styled.input`
 `;
 
 const RoundHistoryContainer = styled.div`
-  background-color: #f0ffff;
+  background-color: #dda0dd;
   border-radius: 0.5rem;
   width: 135px;
   padding: 0 5px;
@@ -139,10 +139,10 @@ const RoundHistoryRecordPtag = styled.p`
 `;
 
 const RankContainer = styled.div`
-  background-color: #b8860b;
+  background-color: #48D1CC;
   border-radius: 0.5rem;
   padding: 0 5px;
-  max-width: 440px;
+  max-440px;
   margin-top: 5px;
 `;
 
