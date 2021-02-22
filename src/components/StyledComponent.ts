@@ -158,6 +158,7 @@ const RoundHistoryRecord = styled.div`
 
 const RankContainer = styled.div`
   background-color: #48d1cc;
+  border: solid 0.5px gray;
   border-radius: 0.5rem;
   padding: 0 5px;
   width: 290.5px;
