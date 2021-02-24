@@ -47,7 +47,25 @@ describe("useGame", () => {
     expect(result.current.isDealerTurn).toBe(true);
     expect(result.current.actionBtnsDisabled).toBe(true);
     expect(result.current.cardsCountDisplayPlayer).toBe(3);
-    //expect(result.current.cardsCountDisplayDealer).toBe(2);
+    // expect(result.current.cardsCountDisplayDealer).toBe(2);
+  });
+
+  it("handle stand", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleStand();
+    });
+    expect(result.current.isDealerTurn).toBe(true);
+    expect(result.current.actionBtnsDisabled).toBe(true);
+    // expect(result.current.cardsCountDisplayDealer).toBe(2);
+  });
+
+  it("handle double", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleDouble();
+    });
+    expect(result.current.bet).toBe(400);
   });
 
   // it("get value", () => {
