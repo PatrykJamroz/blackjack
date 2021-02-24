@@ -293,8 +293,6 @@ export default function useGame() {
     }
   }
 
-  module.exports = calcCredit;
-
   const prevCreditRef = useRef<number>();
 
   useEffect(() => {
@@ -584,5 +582,7 @@ export default function useGame() {
     isDoubleBtnDisabled,
     roundResult,
     calcCredit,
+    isDealerTurn,
+    cardsCountDisplayDealer,
   };
 }

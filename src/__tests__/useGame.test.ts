@@ -20,4 +20,38 @@ describe("useGame", () => {
     });
     expect(result.current.credit).toBe(1015);
   });
+
+  it("start game", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.startGame();
+    });
+    expect(result.current.isGameOn).toBe(true);
+    expect(result.current.isDealerTurn).toBe(false);
+    expect(result.current.credit).toBe(1000);
+    expect(result.current.roundHistory).toStrictEqual([]);
+    expect(result.current.playerDeck).toStrictEqual([]);
+    expect(result.current.dealerDeck).toStrictEqual([]);
+    expect(result.current.roundState).toBe("In progress");
+    expect(result.current.cardsCountDisplayPlayer).toBe(2);
+    expect(result.current.cardsCountDisplayDealer).toBe(1);
+    expect(result.current.actionBtnsDisabled).toBe(false);
+    expect(result.current.roundNo).toBe(1);
+  });
+
+  // it("get value", () => {
+  //   const { result } = renderHook(() => useGame());
+  //   act(() => {
+  //     result.current.getValue("ACE");
+  //   });
+  //   expect(result.current.getValue).toBe(11);
+  // });
+
+  // it("get value", ()=> {
+  //   const {result} = renderHook(()=>useGame())
+  //   act(()=>{
+
+  //   })
+  //   expect().toBe()
+  // })
 });
