@@ -39,6 +39,17 @@ describe("useGame", () => {
     expect(result.current.roundNo).toBe(1);
   });
 
+  it("handle hit", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleHit();
+    });
+    expect(result.current.isDealerTurn).toBe(true);
+    expect(result.current.actionBtnsDisabled).toBe(true);
+    expect(result.current.cardsCountDisplayPlayer).toBe(3);
+    //expect(result.current.cardsCountDisplayDealer).toBe(2);
+  });
+
   // it("get value", () => {
   //   const { result } = renderHook(() => useGame());
   //   act(() => {
