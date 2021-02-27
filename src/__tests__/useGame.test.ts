@@ -68,6 +68,31 @@ describe("useGame", () => {
     expect(result.current.bet).toBe(400);
   });
 
+  it("handle bet change", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleBetChange({
+        currentTarget: { value: 300 },
+      } as any);
+    });
+    expect(result.current.bet).toBe(300);
+  });
+
+  it("set game state text", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.setGameStateText("Win", true);
+    });
+    expect(result.current.gameStateText).toBe("Click new round...");
+  });
+
+  it("compare counts", () => {
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.compareCounts(20, 10);
+    });
+    expect(result.current.roundState).toBe("Win");
+  });
   // it("get value", () => {
   //   const { result } = renderHook(() => useGame());
   //   act(() => {

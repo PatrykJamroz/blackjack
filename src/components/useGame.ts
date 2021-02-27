@@ -578,11 +578,13 @@ export default function useGame() {
     prevCredit,
     creditDisplayVal,
     gameStateText,
+    setGameStateText,
     handleDouble,
     isDoubleBtnDisabled,
     roundResult,
     calcCredit,
     isDealerTurn,
     cardsCountDisplayDealer,
+    compareCounts,
   };
 }
