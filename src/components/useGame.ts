@@ -74,123 +74,173 @@ const todayDate: string = new Date().toLocaleDateString("en-GB", {
   minute: "2-digit",
 });
 
+interface GlobalState {
+  playerName: string;
+  playerDeck: Array<Card>;
+  dealerDeck: Array<Card>;
+  credit: number;
+  bet: number;
+  isGameOn: boolean;
+  roundNo: number;
+  roundState: RoundState;
+  roundHistory: Array<IroundHistory>;
+  rank: Array<Irank>;
+  cardsCountDisplayPlayer: number;
+  cardsCountDisplayDealer: number;
+  actionBtnsDisabled: boolean;
+  isRoundBtnDisabled: boolean;
+  isBetInputDisabled: boolean;
+  isDoubleBtnDisabled: boolean;
+  isBetFaulty: boolean;
+  isDealerTurn: boolean;
+}
+
 export default function useGame() {
-  const [playerDeck, setPlayerDeck] = useState<Array<Card>>(
-    JSON.parse(localStorage.getItem("playerDeck") || "[]")
-  );
-  const [dealerDeck, setdealerDeck] = useState<Array<Card>>(
-    JSON.parse(localStorage.getItem("dealerDeck") || "[]")
-  );
+  const [globalState, setGlobalState] = useState<GlobalState>(() => {
+    const globalState = localStorage.getItem("globalState");
+    if (globalState) {
+      return JSON.parse(globalState);
+    }
+    return {
+      playerName: "Player Name",
+      playerDeck: [],
+      dealerDeck: [],
+      credit: 1000,
+      bet: 200,
+      isGameOn: false,
+      roundNo: 0,
+      roundState: null,
+      roundHistory: [],
+      rank: [],
+      cardsCountDisplayPlayer: 2,
+      cardsCountDisplayDealer: 1,
+      actionBtnsDisabled: true,
+      isRoundBtnDisabled: true,
+      isBetInputDisabled: false,
+      isDoubleBtnDisabled: true,
+      isBetFaulty: true,
+      isDealerTurn: false,
+    };
+  });
 
-  const [isGameOn, setIsGameOn] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isGameOn") || "false")
-  );
-  const [roundNo, setRoundNo] = useState<number>(
-    JSON.parse(localStorage.getItem("roundNo") || "0")
-  );
-  const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>(
-    JSON.parse(localStorage.getItem("roundHistory") || "[]")
-  );
-  const [rank, setRank] = useState<Array<Irank>>(
-    JSON.parse(localStorage.getItem("rank") || "[]")
-  );
+  // const [playerDeck, setPlayerDeck] = useState<Array<Card>>(
+  //   JSON.parse(localStorage.getItem("playerDeck") || "[]")
+  // );
+  // const [dealerDeck, setdealerDeck] = useState<Array<Card>>(
+  //   JSON.parse(localStorage.getItem("dealerDeck") || "[]")
+  // );
 
-  const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(
-    JSON.parse(localStorage.getItem("cardsCountDisplayPlayer") || "2")
-  );
-  const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(
-    JSON.parse(localStorage.getItem("cardsCountDisplayDealer") || "1")
-  );
+  // const [isGameOn, setIsGameOn] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("isGameOn") || "false")
+  // );
+  // const [roundNo, setRoundNo] = useState<number>(
+  //   JSON.parse(localStorage.getItem("roundNo") || "0")
+  // );
+  // const [roundHistory, setRoundHistory] = useState<Array<IroundHistory>>(
+  //   JSON.parse(localStorage.getItem("roundHistory") || "[]")
+  // );
+  // const [rank, setRank] = useState<Array<Irank>>(
+  //   JSON.parse(localStorage.getItem("rank") || "[]")
+  // );
 
-  const [roundState, setRoundState] = useState<RoundState>(
-    JSON.parse(localStorage.getItem("roundState") || "null")
-  );
+  // const [cardsCountDisplayPlayer, setCardsCountDisplayPlayer] = useState(
+  //   JSON.parse(localStorage.getItem("cardsCountDisplayPlayer") || "2")
+  // );
+  // const [cardsCountDisplayDealer, setcardsCountDisplayDealer] = useState(
+  //   JSON.parse(localStorage.getItem("cardsCountDisplayDealer") || "1")
+  // );
 
-  const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("actionBtnsDisabled") || "true")
-  );
-  const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isRoundBtnDisabled") || "true")
-  );
-  const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isBetInputDisabled") || "false")
-  );
-  const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isDoubleBtnDisabled") || "true")
-  );
-  const [isBetFaulty, setIsBetFaulty] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isBetFaulty") || "true")
-  );
+  // const [roundState, setRoundState] = useState<RoundState>(
+  //   JSON.parse(localStorage.getItem("roundState") || "null")
+  // );
 
-  const [isDealerTurn, setIsDealerTurn] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isDealerTurn") || "false")
-  );
+  // const [actionBtnsDisabled, setActionBtnsDisabled] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("actionBtnsDisabled") || "true")
+  // );
+  // const [isRoundBtnDisabled, setIsRoundBtnDisabled] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("isRoundBtnDisabled") || "true")
+  // );
+  // const [isBetInputDisabled, setIsBetInputDisabled] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("isBetInputDisabled") || "false")
+  // );
+  // const [isDoubleBtnDisabled, setIsDoubleBtnDisabled] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("isDoubleBtnDisabled") || "true")
+  // );
+  // const [isBetFaulty, setIsBetFaulty] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("isBetFaulty") || "true")
+  // );
 
-  const [credit, setCredit] = useState<number>(
-    JSON.parse(localStorage.getItem("credit") || "1000")
-  );
-  const [bet, setBet] = useState<number>(
-    JSON.parse(localStorage.getItem("bet") || "200")
-  );
-  const [playerName, setPlayerName] = useState<string>(
-    JSON.parse(localStorage.getItem("playerName") || '"Player Name"')
-  );
+  // const [isDealerTurn, setIsDealerTurn] = useState<boolean>(
+  //   JSON.parse(localStorage.getItem("isDealerTurn") || "false")
+  // );
+
+  // const [credit, setCredit] = useState<number>(
+  //   JSON.parse(localStorage.getItem("credit") || "1000")
+  // );
+  // const [bet, setBet] = useState<number>(
+  //   JSON.parse(localStorage.getItem("bet") || "200")
+  // );
+  // const [playerName, setPlayerName] = useState<string>(
+  //   JSON.parse(localStorage.getItem("playerName") || '"Player Name"')
+  // );
 
   useEffect(() => {
-    localStorage.setItem("playerDeck", JSON.stringify(playerDeck));
-    localStorage.setItem("dealerDeck", JSON.stringify(dealerDeck));
-    localStorage.setItem("roundHistory", JSON.stringify(roundHistory));
-    localStorage.setItem("roundNo", JSON.stringify(roundNo));
-    localStorage.setItem("isGameOn", JSON.stringify(isGameOn));
-    localStorage.setItem("rank", JSON.stringify(rank));
-    localStorage.setItem(
-      "cardsCountDisplayPlayer",
-      JSON.stringify(cardsCountDisplayPlayer)
-    );
-    localStorage.setItem(
-      "cardsCountDisplayDealer",
-      JSON.stringify(cardsCountDisplayDealer)
-    );
-    localStorage.setItem("roundState", JSON.stringify(roundState));
-    localStorage.setItem(
-      "actionBtnsDisabled",
-      JSON.stringify(actionBtnsDisabled)
-    );
-    localStorage.setItem(
-      "isRoundBtnDisabled",
-      JSON.stringify(isRoundBtnDisabled)
-    );
-    localStorage.setItem(
-      "isBetInputDisabled",
-      JSON.stringify(isBetInputDisabled)
-    );
-    localStorage.setItem(
-      "isDoubleBtnDisabled",
-      JSON.stringify(isDoubleBtnDisabled)
-    );
-    localStorage.setItem("isBetFaulty", JSON.stringify(isBetFaulty));
-    localStorage.setItem("isDealerTurn", JSON.stringify(isDealerTurn));
-    localStorage.setItem("credit", JSON.stringify(credit));
-    localStorage.setItem("bet", JSON.stringify(bet));
-    localStorage.setItem("playerName", JSON.stringify(playerName));
+    localStorage.setItem("globalState", JSON.stringify(globalState));
+    // localStorage.setItem("playerDeck", JSON.stringify(playerDeck));
+    // localStorage.setItem("dealerDeck", JSON.stringify(dealerDeck));
+    // localStorage.setItem("roundHistory", JSON.stringify(roundHistory));
+    // localStorage.setItem("roundNo", JSON.stringify(roundNo));
+    // localStorage.setItem("isGameOn", JSON.stringify(isGameOn));
+    // localStorage.setItem("rank", JSON.stringify(rank));
+    // localStorage.setItem(
+    //   "cardsCountDisplayPlayer",
+    //   JSON.stringify(cardsCountDisplayPlayer)
+    // );
+    // localStorage.setItem(
+    //   "cardsCountDisplayDealer",
+    //   JSON.stringify(cardsCountDisplayDealer)
+    // );
+    // localStorage.setItem("roundState", JSON.stringify(roundState));
+    // localStorage.setItem(
+    //   "actionBtnsDisabled",
+    //   JSON.stringify(actionBtnsDisabled)
+    // );
+    // localStorage.setItem(
+    //   "isRoundBtnDisabled",
+    //   JSON.stringify(isRoundBtnDisabled)
+    // );
+    // localStorage.setItem(
+    //   "isBetInputDisabled",
+    //   JSON.stringify(isBetInputDisabled)
+    // );
+    // localStorage.setItem(
+    //   "isDoubleBtnDisabled",
+    //   JSON.stringify(isDoubleBtnDisabled)
+    // );
+    // localStorage.setItem("isBetFaulty", JSON.stringify(isBetFaulty));
+    // localStorage.setItem("isDealerTurn", JSON.stringify(isDealerTurn));
+    // localStorage.setItem("credit", JSON.stringify(credit));
+    // localStorage.setItem("bet", JSON.stringify(bet));
+    // localStorage.setItem("playerName", JSON.stringify(playerName));
   }, [
-    playerDeck,
-    dealerDeck,
-    roundHistory,
-    roundNo,
-    isGameOn,
-    rank,
-    cardsCountDisplayPlayer,
-    cardsCountDisplayDealer,
-    actionBtnsDisabled,
-    isRoundBtnDisabled,
-    isBetInputDisabled,
-    isDoubleBtnDisabled,
-    isBetFaulty,
-    isDealerTurn,
-    credit,
-    bet,
-    playerName,
+    globalState,
+    // playerDeck,
+    // dealerDeck,
+    // roundHistory,
+    // roundNo,
+    // isGameOn,
+    // rank,
+    // cardsCountDisplayPlayer,
+    // cardsCountDisplayDealer,
+    // actionBtnsDisabled,
+    // isRoundBtnDisabled,
+    // isBetInputDisabled,
+    // isDoubleBtnDisabled,
+    // isBetFaulty,
+    // isDealerTurn,
+    // credit,
+    // bet,
+    // playerName,
   ]);
 
   function splitCards(deck: Deck) {
@@ -204,91 +254,157 @@ export default function useGame() {
         pDeck.push(card);
       }
     }
-    setPlayerDeck(pDeck);
-    setdealerDeck(dDeck);
+    setGlobalState({ ...globalState, playerDeck: pDeck, dealerDeck: dDeck });
   }
 
-  function shouldSetRank(roundState: RoundState, rank: any) {
+  function shouldSetRank(
+    roundState: RoundState,
+    rank: any,
+    roundNo: number,
+    playerName: string
+  ) {
     if (roundState !== null && roundNo === 5) {
-      setRank([
-        ...rank,
-        {
-          playerName: playerName,
-          credit: prevCredit,
-          date: todayDate,
-        },
-      ]);
+      setGlobalState({
+        ...globalState,
+        rank: [
+          ...rank,
+          { playerName: playerName, credit: prevCredit, date: todayDate },
+        ],
+      });
     }
   }
 
   function startGame() {
-    shouldSetRank(roundState, rank);
-    setIsGameOn(true);
-    setIsDealerTurn(false);
-    setCredit(1000);
-    setRoundHistory([]);
-    setPlayerDeck([]);
-    setdealerDeck([]);
-    setRoundState("In progress");
-    setCardsCountDisplayPlayer(2);
-    setcardsCountDisplayDealer(1);
-    setRoundNo(1);
-    setActionBtnsDisabled(false);
+    shouldSetRank(
+      globalState.roundState,
+      globalState.rank,
+      globalState.roundNo,
+      globalState.playerName
+    );
+    setGlobalState({
+      ...globalState,
+      isGameOn: true,
+      isDealerTurn: false,
+      credit: 100,
+      roundHistory: [],
+      playerDeck: [],
+      dealerDeck: [],
+      roundState: "In progress",
+      cardsCountDisplayPlayer: 2,
+      cardsCountDisplayDealer: 1,
+      roundNo: 1,
+      actionBtnsDisabled: false,
+    });
+    // setIsGameOn(true);
+    // setIsDealerTurn(false);
+    // setCredit(1000);
+    // setRoundHistory([]);
+    // setPlayerDeck([]);
+    // setdealerDeck([]);
+    // setRoundState("In progress");
+    // setCardsCountDisplayPlayer(2);
+    // setcardsCountDisplayDealer(1);
+    // setRoundNo(1);
+    // setActionBtnsDisabled(false);
     getDeck().then((deckData) => {
       splitCards(deckData);
     });
   }
 
   function handleHit() {
-    setIsDealerTurn(true);
-    setActionBtnsDisabled(true);
-    setCardsCountDisplayPlayer(3);
-    setcardsCountDisplayDealer(2);
+    setGlobalState({
+      ...globalState,
+      isDealerTurn: true,
+      actionBtnsDisabled: true,
+      cardsCountDisplayPlayer: 3,
+      cardsCountDisplayDealer: 2,
+    });
+    // setIsDealerTurn(true);
+    // setActionBtnsDisabled(true);
+    // setCardsCountDisplayPlayer(3);
+    // setcardsCountDisplayDealer(2);
   }
 
   function handleStand() {
-    setIsDealerTurn(true);
-    setActionBtnsDisabled(true);
-    setcardsCountDisplayDealer(2);
+    setGlobalState({
+      ...globalState,
+      isDealerTurn: true,
+      actionBtnsDisabled: true,
+      cardsCountDisplayDealer: 2,
+    });
+    // setIsDealerTurn(true);
+    // setActionBtnsDisabled(true);
+    // setcardsCountDisplayDealer(2);
   }
 
   function handleDouble() {
-    setBet(bet * 2);
-    setIsDealerTurn(true);
-    setActionBtnsDisabled(true);
-    setCardsCountDisplayPlayer(3);
-    setcardsCountDisplayDealer(2);
+    const doubleBet = globalState.bet * 2;
+    setGlobalState({
+      ...globalState,
+      bet: doubleBet,
+      isDealerTurn: true,
+      actionBtnsDisabled: true,
+      cardsCountDisplayPlayer: 3,
+      cardsCountDisplayDealer: 2,
+    });
+    // setBet(bet * 2);
+    // setIsDealerTurn(true);
+    // setActionBtnsDisabled(true);
+    // setCardsCountDisplayPlayer(3);
+    // setcardsCountDisplayDealer(2);
   }
 
   function handleNewRound() {
-    setRoundState("In progress");
-    setPlayerDeck([]);
-    setdealerDeck([]);
-    setCardsCountDisplayPlayer(2);
-    setcardsCountDisplayDealer(1);
-    setIsDealerTurn(false);
+    setGlobalState({
+      ...globalState,
+      roundState: "In progress",
+      playerDeck: [],
+      dealerDeck: [],
+      cardsCountDisplayPlayer: 2,
+      cardsCountDisplayDealer: 1,
+      isDealerTurn: false,
+    });
+    // setRoundState("In progress");
+    // setPlayerDeck([]);
+    // setdealerDeck([]);
+    // setCardsCountDisplayPlayer(2);
+    // setcardsCountDisplayDealer(1);
+    // setIsDealerTurn(false);
     getDeck().then((deckData) => {
       splitCards(deckData);
-      setActionBtnsDisabled(false);
+      setGlobalState({ ...globalState, actionBtnsDisabled: false });
+      // setActionBtnsDisabled(false);
     });
-    setRoundNo(roundNo + 1);
+    const nextRoundNo = globalState.roundNo + 1;
+    setGlobalState({ ...globalState, roundNo: nextRoundNo });
+    // setRoundNo(roundNo + 1);
+
+    // doublecheck if it's possible to do it under one setState
   }
 
   function handleBetChange(e: React.FormEvent<HTMLInputElement>) {
-    setBet(Number(e.currentTarget.value));
+    const newBetVal = Number(e.currentTarget.value);
+    setGlobalState({ ...globalState, bet: newBetVal });
+    // setBet(Number(e.currentTarget.value));
   }
 
   function handlePlayerNameChange(e: React.FormEvent<HTMLInputElement>) {
-    setPlayerName(e.currentTarget.value);
+    const newPlayerName = e.currentTarget.value;
+    setGlobalState({ ...globalState, playerName: newPlayerName });
+    // setPlayerName(e.currentTarget.value);
   }
 
-  function calcCredit(bet: number, roundState: RoundState) {
+  function calcCredit(bet: number, roundState: RoundState, credit: number) {
+    const newCreditValWin = credit + 1.5 * bet;
+    const newCreditValLoose = credit - bet;
     switch (roundState) {
       case "Win":
-        setCredit(credit + 1.5 * bet);
+        setGlobalState({ ...globalState, credit: newCreditValWin });
+        // setCredit(credit + 1.5 * bet);
         break;
       case "Loose":
-        setCredit(credit - bet);
+        setGlobalState({ ...globalState, credit: newCreditValLoose });
+        // setCredit(credit - bet);
         break;
     }
   }
@@ -452,7 +568,7 @@ export default function useGame() {
           },
         ]);
         setIsBetInputDisabled(false);
-        calcCredit(bet, roundState);
+        calcCredit(bet, roundState, credit);
 
         break;
       case "In progress":
