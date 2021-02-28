@@ -412,16 +412,16 @@ export default function useGame() {
   const prevCreditRef = useRef<number>();
 
   useEffect(() => {
-    prevCreditRef.current = credit;
+    prevCreditRef.current = globalState.credit;
   });
 
   const prevCredit = prevCreditRef.current;
 
   const creditDisplayVal = creditDisplay(
-    credit,
+    globalState.credit,
     prevCredit,
-    roundNo,
-    roundState
+    globalState.roundNo,
+    globalState.roundState
   );
 
   function creditDisplay(
@@ -439,9 +439,19 @@ export default function useGame() {
     }
   }
 
-  const gameStateText = setGameStateText(roundState, isGameOn);
+  const gameStateText = setGameStateText(
+    globalState.roundState,
+    globalState.isGameOn,
+    globalState.credit,
+    globalState.roundNo
+  );
 
-  function setGameStateText(roundState: RoundState, isGameOn: boolean) {
+  function setGameStateText(
+    roundState: RoundState,
+    isGameOn: boolean,
+    credit: number,
+    roundNo: number
+  ) {
     if (roundState === "Game over") {
       return "Game over! You are broke, hit new game to start over...";
     } else if (credit > 0 && roundNo !== 0 && !isGameOn) {
@@ -459,7 +469,7 @@ export default function useGame() {
     }
   }
 
-  const roundResult = setRoundResult(roundState);
+  const roundResult = setRoundResult(globalState.roundState);
 
   function setRoundResult(roundState: RoundState) {
     switch (roundState) {
@@ -478,74 +488,107 @@ export default function useGame() {
 
   function compareCounts(playerCount: number, dealerCount: number) {
     if (dealerCount > playerCount) {
-      setRoundState("Loose");
+      setGlobalState({ ...globalState, roundState: "Loose" });
+      // setRoundState("Loose");
     } else if (dealerCount < playerCount) {
-      setRoundState("Win");
+      setGlobalState({ ...globalState, roundState: "Win" });
+      // setRoundState("Win");
     } else {
-      setRoundState("Draw");
+      setGlobalState({ ...globalState, roundState: "Draw" });
+      // setRoundState("Draw");
     }
   }
 
-  const dealerHand = dealerDeck.slice(0, cardsCountDisplayDealer);
-  const playerHand = playerDeck.slice(0, cardsCountDisplayPlayer);
+  const dealerHand = globalState.dealerDeck.slice(
+    0,
+    globalState.cardsCountDisplayDealer
+  );
+  const playerHand = globalState.playerDeck.slice(
+    0,
+    globalState.cardsCountDisplayPlayer
+  );
   const playerCount = count(playerHand);
   const dealerCount = count(dealerHand);
-  const rankSorted = rank.sort((a, b) => {
+  const rankSorted = globalState.rank.sort((a, b) => {
     return b.credit - a.credit;
   });
 
   useEffect(() => {
-    if (!isGameOn) {
-      setCredit(1000);
+    if (!globalState.isGameOn) {
+      setGlobalState({ ...globalState, credit: 1000 });
+      // setCredit(1000);
     }
-  }, [isGameOn]);
+  }, [globalState.isGameOn]);
 
   useEffect(() => {
-    bet > credit || bet === 0 ? setIsBetFaulty(true) : setIsBetFaulty(false);
-  }, [bet, credit]);
+    globalState.bet > globalState.credit || globalState.bet === 0
+      ? setGlobalState({ ...globalState, isBetFaulty: true })
+      : setGlobalState({ ...globalState, isBetFaulty: false });
+  }, [globalState.bet, globalState.credit]);
 
   useEffect(() => {
-    if (roundState === null) {
-      setIsRoundBtnDisabled(true);
-    } else if (roundState === "In progress") {
-      setIsRoundBtnDisabled(true);
-    } else if (roundNo === 5) {
-      setIsRoundBtnDisabled(true);
-    } else if (!isGameOn) {
-      setIsRoundBtnDisabled(true);
+    if (globalState.roundState === null) {
+      setGlobalState({ ...globalState, isRoundBtnDisabled: true });
+      //setIsRoundBtnDisabled(true);
+    } else if (globalState.roundState === "In progress") {
+      setGlobalState({ ...globalState, isRoundBtnDisabled: true });
+      //setIsRoundBtnDisabled(true);
+    } else if (globalState.roundNo === 5) {
+      setGlobalState({ ...globalState, isRoundBtnDisabled: true });
+      //setIsRoundBtnDisabled(true);
+    } else if (!globalState.isGameOn) {
+      setGlobalState({ ...globalState, isRoundBtnDisabled: true });
+      //setIsRoundBtnDisabled(true);
     } else {
-      setIsRoundBtnDisabled(false);
+      setGlobalState({ ...globalState, isRoundBtnDisabled: false });
+      //setIsRoundBtnDisabled(false);
     }
-  }, [roundState, roundNo, isGameOn]);
+  }, [globalState.roundState, globalState.roundNo, globalState.isGameOn]);
 
   useEffect(() => {
-    if (roundState !== "In progress") {
-      setActionBtnsDisabled(true);
+    if (globalState.roundState !== "In progress") {
+      setGlobalState({ ...globalState, actionBtnsDisabled: true });
+      //setActionBtnsDisabled(true);
     }
 
-    if (roundState !== "In progress" && roundNo === 5) {
-      setIsGameOn(false);
+    if (globalState.roundState !== "In progress" && globalState.roundNo === 5) {
+      setGlobalState({ ...globalState, isGameOn: false });
+      //setIsGameOn(false);
     }
-  }, [roundState, roundNo]);
-
-  useEffect(() => {
-    if (roundState === null) {
-      setIsDoubleBtnDisabled(true);
-    } else if (2 * bet > credit) {
-      setIsDoubleBtnDisabled(true);
-    } else if (actionBtnsDisabled) {
-      setIsDoubleBtnDisabled(true);
-    } else if (!actionBtnsDisabled && 2 * bet <= credit) {
-      setIsDoubleBtnDisabled(false);
-    }
-  }, [roundState, bet, credit, actionBtnsDisabled]);
+  }, [globalState.roundState, globalState.roundNo]);
 
   useEffect(() => {
-    if (credit === 0) {
-      setIsGameOn(false);
-      setRoundState("Game over");
+    if (globalState.roundState === null) {
+      setGlobalState({ ...globalState, isDoubleBtnDisabled: true });
+      //setIsDoubleBtnDisabled(true);
+    } else if (2 * globalState.bet > globalState.credit) {
+      setGlobalState({ ...globalState, isDoubleBtnDisabled: true });
+      //setIsDoubleBtnDisabled(true);
+    } else if (globalState.actionBtnsDisabled) {
+      setGlobalState({ ...globalState, isDoubleBtnDisabled: true });
+      //setIsDoubleBtnDisabled(true);
+    } else if (
+      !globalState.actionBtnsDisabled &&
+      2 * globalState.bet <= globalState.credit
+    ) {
+      setGlobalState({ ...globalState, isDoubleBtnDisabled: false });
+      //setIsDoubleBtnDisabled(false);
     }
-  }, [credit]);
+  }, [
+    globalState.roundState,
+    globalState.bet,
+    globalState.credit,
+    globalState.actionBtnsDisabled,
+  ]);
+
+  useEffect(() => {
+    if (globalState.credit === 0) {
+      setGlobalState({ ...globalState, isGameOn: false });
+      //setIsGameOn(false);
+      setGlobalState({ ...globalState, roundState: "Game over" });
+      //setRoundState("Game over");
+    }
+  }, [globalState.credit]);
 
   const isInitial = useRef(true);
   useEffect(() => {
@@ -553,101 +596,166 @@ export default function useGame() {
       isInitial.current = false;
       return;
     }
-    switch (roundState) {
+    switch (globalState.roundState) {
       case "Win":
       case "Loose":
       case "Draw":
-        setRoundHistory([
-          ...roundHistory,
-          {
-            round: roundNo,
-            playerHand: playerHand,
-            playerCount: playerCount,
-            dealerHand: dealerHand,
-            dealerCount: dealerCount,
-          },
-        ]);
-        setIsBetInputDisabled(false);
-        calcCredit(bet, roundState, credit);
+        setGlobalState({
+          ...globalState,
+          roundHistory: [
+            ...globalState.roundHistory,
+            {
+              round: globalState.roundNo,
+              playerHand: playerHand,
+              playerCount: playerCount,
+              dealerHand: dealerHand,
+              dealerCount: dealerCount,
+            },
+          ],
+        });
+        // setRoundHistory([
+        //   ...roundHistory,
+        //   {
+        //     round: roundNo,
+        //     playerHand: playerHand,
+        //     playerCount: playerCount,
+        //     dealerHand: dealerHand,
+        //     dealerCount: dealerCount,
+        //   },
+        // ]);
+        setGlobalState({ ...globalState, isBetInputDisabled: false });
+        //setIsBetInputDisabled(false);
+        calcCredit(globalState.bet, globalState.roundState, globalState.credit);
 
         break;
       case "In progress":
-        setIsBetInputDisabled(true);
+        setGlobalState({ ...globalState, isBetInputDisabled: true });
+        //setIsBetInputDisabled(true);
         break;
     }
-  }, [roundState]);
+  }, [globalState.roundState]);
 
   useEffect(() => {
-    if (isGameOn) {
-      if (!isDealerTurn && playerCount === 21) {
-        if (cardsCountDisplayDealer === 1) {
-          setcardsCountDisplayDealer(2);
-        } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
-          setRoundState("Draw");
+    if (globalState.isGameOn) {
+      if (!globalState.isDealerTurn && playerCount === 21) {
+        if (globalState.cardsCountDisplayDealer === 1) {
+          setGlobalState({ ...globalState, cardsCountDisplayDealer: 2 });
+          //setcardsCountDisplayDealer(2);
+        } else if (
+          dealerCount === 21 &&
+          globalState.cardsCountDisplayDealer === 2
+        ) {
+          setGlobalState({ ...globalState, roundState: "Draw" });
+          //setRoundState("Draw");
         } else {
-          setRoundState("Win");
+          setGlobalState({ ...globalState, roundState: "Win" });
+          //setRoundState("Win");
         }
       } else {
-        if (cardsCountDisplayPlayer === 3) {
+        if (globalState.cardsCountDisplayPlayer === 3) {
           if (playerCount > 21) {
-            setRoundState("Loose");
+            setGlobalState({ ...globalState, roundState: "Loose" });
+            //setRoundState("Loose");
           } else if (playerCount === 21) {
-            if (cardsCountDisplayDealer === 1) {
-              setcardsCountDisplayDealer(2);
-            } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
-              setRoundState("Draw");
-            } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
-              setcardsCountDisplayDealer(3);
-            } else if (cardsCountDisplayDealer === 3) {
+            if (globalState.cardsCountDisplayDealer === 1) {
+              setGlobalState({ ...globalState, cardsCountDisplayDealer: 2 });
+              //setcardsCountDisplayDealer(2);
+            } else if (
+              dealerCount === 21 &&
+              globalState.cardsCountDisplayDealer === 2
+            ) {
+              setGlobalState({ ...globalState, roundState: "Draw" });
+              //setRoundState("Draw");
+            } else if (
+              dealerCount < 17 &&
+              globalState.cardsCountDisplayDealer === 2
+            ) {
+              setGlobalState({ ...globalState, cardsCountDisplayDealer: 3 });
+              //setcardsCountDisplayDealer(3);
+            } else if (globalState.cardsCountDisplayDealer === 3) {
               if (dealerCount === 21) {
-                setRoundState("Draw");
+                setGlobalState({ ...globalState, roundState: "Draw" });
+                //setRoundState("Draw");
               } else {
-                setRoundState("Win");
+                setGlobalState({ ...globalState, roundState: "Win" });
+                //setRoundState("Win");
               }
             } else {
-              setRoundState("Win");
+              setGlobalState({ ...globalState, roundState: "Win" });
+              //setRoundState("Win");
             }
           } else {
-            if (cardsCountDisplayDealer === 1) {
-              setcardsCountDisplayDealer(2);
-            } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
-              setRoundState("Loose");
-            } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
-              setcardsCountDisplayDealer(3);
-            } else if (cardsCountDisplayDealer === 3) {
+            if (globalState.cardsCountDisplayDealer === 1) {
+              setGlobalState({ ...globalState, cardsCountDisplayDealer: 2 });
+              //setcardsCountDisplayDealer(2);
+            } else if (
+              dealerCount === 21 &&
+              globalState.cardsCountDisplayDealer === 2
+            ) {
+              setGlobalState({ ...globalState, roundState: "Loose" });
+              //setRoundState("Loose");
+            } else if (
+              dealerCount < 17 &&
+              globalState.cardsCountDisplayDealer === 2
+            ) {
+              setGlobalState({ ...globalState, cardsCountDisplayDealer: 3 });
+              //setcardsCountDisplayDealer(3);
+            } else if (globalState.cardsCountDisplayDealer === 3) {
               if (dealerCount === 21) {
-                setRoundState("Loose");
+                setGlobalState({ ...globalState, roundState: "Loose" });
+                //setRoundState("Loose");
               } else if (dealerCount > 21) {
-                setRoundState("Win");
+                setGlobalState({ ...globalState, roundState: "Win" });
+                //setRoundState("Win");
               } else if (dealerCount > playerCount) {
-                setRoundState("Loose");
+                setGlobalState({ ...globalState, roundState: "Loose" });
+                //setRoundState("Loose");
               } else if (dealerCount < playerCount) {
-                setRoundState("Win");
+                setGlobalState({ ...globalState, roundState: "Win" });
+                //setRoundState("Win");
               } else {
-                setRoundState("Draw");
+                setGlobalState({ ...globalState, roundState: "Draw" });
+                //setRoundState("Draw");
               }
             } else {
               compareCounts(playerCount, dealerCount);
             }
           }
-        } else if (cardsCountDisplayPlayer === 2 && isDealerTurn) {
-          if (cardsCountDisplayDealer === 1) {
-            setcardsCountDisplayDealer(2);
-          } else if (dealerCount === 21 && cardsCountDisplayDealer === 2) {
-            setRoundState("Loose");
-          } else if (dealerCount < 17 && cardsCountDisplayDealer === 2) {
-            setcardsCountDisplayDealer(3);
-          } else if (cardsCountDisplayDealer === 3) {
+        } else if (
+          globalState.cardsCountDisplayPlayer === 2 &&
+          globalState.isDealerTurn
+        ) {
+          if (globalState.cardsCountDisplayDealer === 1) {
+            setGlobalState({ ...globalState, cardsCountDisplayDealer: 2 });
+            //setcardsCountDisplayDealer(2);
+          } else if (
+            dealerCount === 21 &&
+            globalState.cardsCountDisplayDealer === 2
+          ) {
+            setGlobalState({ ...globalState, roundState: "Loose" });
+            //setRoundState("Loose");
+          } else if (
+            dealerCount < 17 &&
+            globalState.cardsCountDisplayDealer === 2
+          ) {
+            setGlobalState({ ...globalState, cardsCountDisplayDealer: 3 });
+            //setcardsCountDisplayDealer(3);
+          } else if (globalState.cardsCountDisplayDealer === 3) {
             if (dealerCount === 21) {
-              setRoundState("Loose");
+              setGlobalState({ ...globalState, roundState: "Loose" });
+              //setRoundState("Loose");
             } else if (dealerCount > 21) {
-              setRoundState("Win");
+              setGlobalState({ ...globalState, roundState: "Win" });
+              //setRoundState("Win");
             } else if (dealerCount > playerCount) {
-              setRoundState("Loose");
+              setGlobalState({ ...globalState, roundState: "Loose" });
+              //setRoundState("Loose");
             } else if (dealerCount < playerCount) {
-              setRoundState("Win");
+              setGlobalState({ ...globalState, roundState: "Win" });
+              //setRoundState("Win");
             } else {
-              setRoundState("Draw");
+              setGlobalState({ ...globalState, roundState: "Draw" });
+              //setRoundState("Draw");
             }
           } else {
             compareCounts(playerCount, dealerCount);
@@ -658,36 +766,36 @@ export default function useGame() {
   }, [
     dealerCount,
     playerCount,
-    isDealerTurn,
-    cardsCountDisplayDealer,
-    cardsCountDisplayPlayer,
-    isGameOn,
+    globalState.isDealerTurn,
+    globalState.cardsCountDisplayDealer,
+    globalState.cardsCountDisplayPlayer,
+    globalState.isGameOn,
   ]);
 
   return {
     startGame,
-    playerDeck,
-    dealerDeck,
-    isGameOn,
-    cardsCountDisplayPlayer,
+    // playerDeck,
+    // dealerDeck,
+    // isGameOn,
+    // cardsCountDisplayPlayer,
     playerHand,
     dealerHand,
     playerCount,
     dealerCount,
     handleHit,
     handleStand,
-    actionBtnsDisabled,
+    //actionBtnsDisabled,
     handleNewRound,
-    isRoundBtnDisabled,
-    roundNo,
-    roundHistory,
-    roundState,
-    credit,
-    bet,
+    // isRoundBtnDisabled,
+    // roundNo,
+    // roundHistory,
+    // roundState,
+    // credit,
+    // bet,
     handleBetChange,
-    isBetInputDisabled,
-    isBetFaulty,
-    playerName,
+    // isBetInputDisabled,
+    // isBetFaulty,
+    // playerName,
     handlePlayerNameChange,
     todayDate,
     rankSorted,
@@ -695,7 +803,8 @@ export default function useGame() {
     creditDisplayVal,
     gameStateText,
     handleDouble,
-    isDoubleBtnDisabled,
+    // isDoubleBtnDisabled,
     roundResult,
+    globalState,
   };
 }
