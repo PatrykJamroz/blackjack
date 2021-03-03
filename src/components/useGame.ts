@@ -66,14 +66,6 @@ async function getDeck() {
   return deckData;
 }
 
-const todayDate: string = new Date().toLocaleDateString("en-GB", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
 interface GlobalState {
   playerName: string;
   playerDeck: Array<Card>;
@@ -156,7 +148,17 @@ export default function useGame() {
         ...prevState,
         rank: [
           ...rank,
-          { playerName: playerName, credit: prevCredit, date: todayDate },
+          {
+            playerName: playerName,
+            credit: prevCredit,
+            date: new Date().toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
         ],
       }));
     }
@@ -697,7 +699,6 @@ export default function useGame() {
     handleNewRound,
     handleBetChange,
     handlePlayerNameChange,
-    todayDate,
     rankSorted,
     prevCredit,
     creditDisplayVal,
