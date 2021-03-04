@@ -146,20 +146,15 @@ export default function Game() {
                     Dealer Score: {obj.dealerCount}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Cards:{" "}
-                    {obj.dealerHand.map((array, index) => {
-                      return <span key={index}>{array.code} </span>;
-                    })}
+                    Cards: {game.dealerHandValsStr}
+                    {"."}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
                     Player Score: {obj.playerCount}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
                     {" "}
-                    Cards:{" "}
-                    {obj.playerHand.map((array, index) => {
-                      return <span key={index}>{array.code} </span>;
-                    })}
+                    Cards: {game.playerHandValsStr}
                   </RoundHistoryRecordPtag>
                 </RoundHistoryRecord>
               );

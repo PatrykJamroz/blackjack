@@ -378,6 +378,16 @@ export default function useGame() {
     return b.credit - a.credit;
   });
 
+  const dealerHandVals = dealerHand.map((array) => {
+    return array.value;
+  });
+  const dealerHandValsStr = dealerHandVals.join(", ");
+
+  const playerHandVals = playerHand.map((array) => {
+    return array.value;
+  });
+  const playerHandValsStr = playerHandVals.join(", ");
+
   useEffect(() => {
     globalState.bet > globalState.credit || globalState.bet === 0
       ? setGlobalState((prevState) => ({ ...prevState, isBetFaulty: true }))
@@ -706,5 +716,7 @@ export default function useGame() {
     handleDouble,
     roundResult,
     globalState,
+    playerHandValsStr,
+    dealerHandValsStr,
   };
 }
