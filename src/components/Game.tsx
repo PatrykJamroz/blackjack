@@ -130,7 +130,10 @@ export default function Game() {
               display: game.globalState.isBetFaulty ? "block" : "none",
             }}
           >
-            Bet must be a number between 1 and {game.globalState.credit}!
+            {
+              game.globalState
+                .isBetFaultyMessage /* Bet must be a number between 1 and {game.globalState.credit}! */
+            }
           </FaultyBetPTag>
         </Container>
         <RoundHistoryContainer>
@@ -140,26 +143,27 @@ export default function Game() {
               return (
                 <RoundHistoryRecord key={index}>
                   <RoundHistoryRecordPtag>
-                    Round: {obj.round}
+                    <span style={{ fontWeight: "bold" }}>Round:</span>{" "}
+                    {obj.round}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Dealer Score: {obj.dealerCount}
+                    <span style={{ fontWeight: "bold" }}>Dealer score:</span>{" "}
+                    {obj.dealerCount}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Cards:{" "}
-                    {obj.dealerHand.map((array, index) => {
-                      return <span key={index}>{array.code} </span>;
-                    })}
+                    <span style={{ fontWeight: "bold" }}>Dealer cards:</span>{" "}
+                    {obj.dealerHand}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Player Score: {obj.playerCount}
+                    <span style={{ fontWeight: "bold" }}>Player score:</span>{" "}
+                    {obj.playerCount}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
                     {" "}
-                    Cards:{" "}
-                    {obj.playerHand.map((array, index) => {
-                      return <span key={index}>{array.code} </span>;
-                    })}
+                    <span style={{ fontWeight: "bold" }}>
+                      Player cards:
+                    </span>{" "}
+                    {obj.playerHand}
                   </RoundHistoryRecordPtag>
                 </RoundHistoryRecord>
               );
