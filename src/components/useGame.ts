@@ -21,9 +21,9 @@ interface Card {
 
 interface IroundHistory {
   round: number;
-  playerHand: Card[];
+  playerHand: string;
   playerCount: number;
-  dealerHand: Card[];
+  dealerHand: string;
   dealerCount: number;
 }
 
@@ -84,6 +84,7 @@ interface GlobalState {
   isBetInputDisabled: boolean;
   isDoubleBtnDisabled: boolean;
   isBetFaulty: boolean;
+  isBetFaultyMessage: string;
   isDealerTurn: boolean;
 }
 
@@ -111,6 +112,7 @@ export default function useGame() {
       isBetInputDisabled: false,
       isDoubleBtnDisabled: true,
       isBetFaulty: true,
+      isBetFaultyMessage: "",
       isDealerTurn: false,
     };
   });
@@ -389,10 +391,26 @@ export default function useGame() {
   const playerHandValsStr = playerHandVals.join(", ");
 
   useEffect(() => {
-    globalState.bet > globalState.credit || globalState.bet === 0
-      ? setGlobalState((prevState) => ({ ...prevState, isBetFaulty: true }))
-      : setGlobalState((prevState) => ({ ...prevState, isBetFaulty: false }));
-  }, [globalState.bet, globalState.credit]);
+    if (globalState.roundNo === 5 || globalState.roundState === "Game over") {
+      if (globalState.bet > 1000 || globalState.bet <= 0) {
+        setGlobalState((prevState) => ({
+          ...prevState,
+          isBetFaulty: true,
+          isBetFaultyMessage: `Bet must be a number between 1 and 1000`,
+        }));
+      } else {
+        setGlobalState((prevState) => ({ ...prevState, isBetFaulty: false }));
+      }
+    } else if (globalState.bet > globalState.credit || globalState.bet <= 0) {
+      setGlobalState((prevState) => ({
+        ...prevState,
+        isBetFaulty: true,
+        isBetFaultyMessage: `Bet must be a number between 1 and ${prevState.credit}`,
+      }));
+    } else {
+      setGlobalState((prevState) => ({ ...prevState, isBetFaulty: false }));
+    }
+  }, [globalState.bet, globalState.credit, globalState.roundState]);
 
   useEffect(() => {
     if (globalState.roundState === null) {
@@ -493,9 +511,9 @@ export default function useGame() {
             ...prevState.roundHistory,
             {
               round: globalState.roundNo,
-              playerHand: playerHand,
+              playerHand: playerHandValsStr,
               playerCount: playerCount,
-              dealerHand: dealerHand,
+              dealerHand: dealerHandValsStr,
               dealerCount: dealerCount,
             },
           ],
