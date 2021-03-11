@@ -3,8 +3,8 @@ import styled from "styled-components";
 const GameContainer = styled.div`
   margin: 0 auto;
   width: 300.5px;
-  @media (min-width: 449px) {
-    margin: 0 0 0 5px;
+  @media (min-width: 490px) {
+    margin: 0 auto;
     width: 476.5px;
   }
 `;
@@ -12,7 +12,7 @@ const GameContainer = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
-  @media (min-width: 449px) {
+  @media (min-width: 490px) {
     display: flex;
   }
 `;
@@ -134,7 +134,7 @@ const RoundHistoryContainer = styled.div`
   padding: 0 5px;
   margin-top: 5px;
   border: solid 0.5px gray;
-  @media (min-width: 449px) {
+  @media (min-width: 490px) {
     margin: 0 0 0 5px;
     width: 160px;
   }
@@ -157,7 +157,7 @@ const RoundHistoryRecordPtag = styled.p`
 const RoundHistoryRecord = styled.div`
   margin-top: 5px;
   padding-bottom: 5px;
-  @media (min-width: 449px) {
+  @media (min-width: 490px) {
     width: 90%;
   }
 `;
