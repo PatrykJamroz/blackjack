@@ -735,8 +735,6 @@ export default function useGame() {
     handleDouble,
     roundResult,
     calcCredit,
-    isDealerTurn,
-    cardsCountDisplayDealer,
     compareCounts,
     globalState,
     playerHandValsStr,
