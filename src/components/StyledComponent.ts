@@ -2,10 +2,15 @@ import styled from "styled-components";
 
 const GameContainer = styled.div`
   margin: 0 auto;
+  width: 300.5px;
+  @media (min-width: 449px) {
+    margin: 0 0 0 5px;
+    width: 476.5px;
+  }
 `;
 
 const Wrapper = styled.div`
-  width: 300.5px;
+  width: 100%;
   margin: 0 auto;
   @media (min-width: 449px) {
     display: flex;
@@ -13,7 +18,7 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
-  width: 100%;
+  width: 300.5px;
 `;
 
 const TopPanel = styled.div`
@@ -23,6 +28,7 @@ const TopPanel = styled.div`
   color: white;
   padding: 0.25rem;
   margin-bottom: 0;
+  width: 292.5px;
 `;
 
 const BotPanel = styled(TopPanel)`
@@ -124,12 +130,13 @@ const PlayerInput = styled.input`
 const RoundHistoryContainer = styled.div`
   background-color: #dda0dd;
   border-radius: 0.5rem;
-  width: 290.5;
+  width: 288.5px;
   padding: 0 5px;
   margin-top: 5px;
   border: solid 0.5px gray;
   @media (min-width: 449px) {
     margin: 0 0 0 5px;
+    width: 160px;
   }
 `;
 
@@ -148,11 +155,10 @@ const RoundHistoryRecordPtag = styled.p`
 `;
 
 const RoundHistoryRecord = styled.div`
-  border-bottom: dashed 0.5px whitesmoke;
   margin-top: 5px;
   padding-bottom: 5px;
   @media (min-width: 449px) {
-    width: 100px;
+    width: 90%;
   }
 `;
 
@@ -162,7 +168,8 @@ const RankContainer = styled.div`
   border-radius: 0.5rem;
   padding: 0 5px;
   width: 290.5px;
-  margin: 5px auto 0 auto;
+  margin-top: 5px;
+  position: relative;
 `;
 
 const RankRecordLiTag = styled.li`

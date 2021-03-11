@@ -40,7 +40,7 @@ export default function Game() {
           <TopPanel>Dealer hand: {game.dealerCount}</TopPanel>
           <Table>
             <Deck>
-              {game.roundState === null ? (
+              {game.globalState.roundState === null ? (
                 <CardDummy src={unknownCardURL} />
               ) : (
                 game.dealerHand.map((card, index) => (
@@ -53,7 +53,7 @@ export default function Game() {
               <GameStatusPtag>{game.gameStateText}</GameStatusPtag>
             </GameStatus>
             <Deck>
-              {game.roundState === null ? (
+              {game.globalState.roundState === null ? (
                 <CardDummy src={unknownCardURL} />
               ) : (
                 game.playerHand.map((card, index) => (
@@ -64,25 +64,25 @@ export default function Game() {
           </Table>
           <BotPanel>
             <p style={{ margin: "0" }}>Player hand: {game.playerCount}</p>
-            <p style={{ margin: "0" }}>Round: {game.roundNo}/5</p>
+            <p style={{ margin: "0" }}>Round: {game.globalState.roundNo}/5</p>
             <p style={{ margin: "0" }}>Credit: ${game.creditDisplayVal}</p>
           </BotPanel>
           <ControlsContainer>
             <Button
               onClick={game.handleHit}
-              disabled={game.actionBtnsDisabled ? true : false}
+              disabled={game.globalState.actionBtnsDisabled ? true : false}
             >
               Hit
             </Button>
             <Button
               onClick={game.handleStand}
-              disabled={game.actionBtnsDisabled ? true : false}
+              disabled={game.globalState.actionBtnsDisabled ? true : false}
             >
               Stand
             </Button>
             <Button
               onClick={game.handleDouble}
-              disabled={game.isDoubleBtnDisabled}
+              disabled={game.globalState.isDoubleBtnDisabled}
             >
               Double
             </Button>
@@ -91,7 +91,10 @@ export default function Game() {
             <BtnNewRound
               onClick={game.handleNewRound}
               disabled={
-                game.isRoundBtnDisabled || game.isBetFaulty ? true : false
+                game.globalState.isRoundBtnDisabled ||
+                game.globalState.isBetFaulty
+                  ? true
+                  : false
               }
             >
               New round
@@ -101,9 +104,9 @@ export default function Game() {
               <Input
                 name="betInput"
                 type="number"
-                value={game.bet}
+                value={game.globalState.bet}
                 onChange={game.handleBetChange}
-                disabled={game.isBetInputDisabled}
+                disabled={game.globalState.isBetInputDisabled}
                 autoFocus
               />
             </BetContainer>
@@ -111,52 +114,56 @@ export default function Game() {
           <ControlsContainer>
             <BtnNewGame
               onClick={game.startGame}
-              disabled={game.isBetFaulty ? true : false}
+              disabled={game.globalState.isBetFaulty ? true : false}
             >
               New game
             </BtnNewGame>
             <PlayerInput
               name="playerInput"
               type="text"
-              value={game.playerName}
+              value={game.globalState.playerName}
               onChange={game.handlePlayerNameChange}
             />
           </ControlsContainer>
           <FaultyBetPTag
             style={{
-              display: game.isBetFaulty ? "block" : "none",
+              display: game.globalState.isBetFaulty ? "block" : "none",
             }}
           >
-            Bet must be a number between 1 and {game.credit}!
+            {
+              game.globalState
+                .isBetFaultyMessage /* Bet must be a number between 1 and {game.globalState.credit}! */
+            }
           </FaultyBetPTag>
         </Container>
         <RoundHistoryContainer>
           <TitlePTag>Round History</TitlePTag>
           <div>
-            {game.roundHistory.map((obj, index) => {
+            {game.globalState.roundHistory.map((obj, index) => {
               return (
                 <RoundHistoryRecord key={index}>
                   <RoundHistoryRecordPtag>
-                    Round: {obj.round}
+                    <span style={{ fontWeight: "bold" }}>Round:</span>{" "}
+                    {obj.round}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Dealer Score: {obj.dealerCount}
+                    <span style={{ fontWeight: "bold" }}>Dealer score:</span>{" "}
+                    {obj.dealerCount}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Cards:{" "}
-                    {obj.dealerHand.map((array, index) => {
-                      return <span key={index}>{array.code} </span>;
-                    })}
+                    <span style={{ fontWeight: "bold" }}>Dealer cards:</span>{" "}
+                    {obj.dealerHand}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
-                    Player Score: {obj.playerCount}
+                    <span style={{ fontWeight: "bold" }}>Player score:</span>{" "}
+                    {obj.playerCount}
                   </RoundHistoryRecordPtag>
                   <RoundHistoryRecordPtag>
                     {" "}
-                    Cards:{" "}
-                    {obj.playerHand.map((array, index) => {
-                      return <span key={index}>{array.code} </span>;
-                    })}
+                    <span style={{ fontWeight: "bold" }}>
+                      Player cards:
+                    </span>{" "}
+                    {obj.playerHand}
                   </RoundHistoryRecordPtag>
                 </RoundHistoryRecord>
               );
