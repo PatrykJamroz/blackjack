@@ -47,7 +47,7 @@ describe("useGame", () => {
     expect(result.current.globalState.isDealerTurn).toBe(true);
     expect(result.current.globalState.actionBtnsDisabled).toBe(true);
     expect(result.current.globalState.cardsCountDisplayPlayer).toBe(3);
-    // expect(result.current.cardsCountDisplayDealer).toBe(2);
+    expect(result.current.globalState.cardsCountDisplayDealer).toBe(3);
   });
 
   it("handle stand", () => {
@@ -57,7 +57,6 @@ describe("useGame", () => {
     });
     expect(result.current.globalState.isDealerTurn).toBe(true);
     expect(result.current.globalState.actionBtnsDisabled).toBe(true);
-    // expect(result.current.cardsCountDisplayDealer).toBe(2);
   });
 
   it("handle double", () => {

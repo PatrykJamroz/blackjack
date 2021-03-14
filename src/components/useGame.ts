@@ -282,7 +282,7 @@ export default function useGame() {
 
   useEffect(() => {
     prevCreditRef.current = globalState.credit;
-    console.log(`prevcredit: ${prevCredit} credit: ${globalState.credit}`);
+    // console.log(`prevcredit: ${prevCredit} credit: ${globalState.credit}`);
   }, [globalState.credit]);
 
   const prevCredit = prevCreditRef.current;
